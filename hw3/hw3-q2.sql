@@ -14,6 +14,30 @@ from (
 )s
 JOIN allFlights as F
 ON
-F.ogCity = s.ogCity;
+F.ogCity = s.ogCity
+order by F.ogCity asc;
 
---nice we got the right cardinality
+/*
+Returns 109 rows, time: 13s
+Aberdeen SD
+Abilene TX
+Alpena MI
+Ashland WV
+Augusta GA
+Barrow AK
+Beaumont/Port Arthur TX
+Bemidji MN
+Bethel AK
+Binghamton NY
+Brainerd MN
+Bristol/Johnson City/Kingsport TN
+Butte MT
+Carlsbad CA
+Casper WY
+Cedar City UT
+Chico CA
+College Station/Bryan TX
+Columbia MO
+Columbus GA
+Columbus MS
+*/

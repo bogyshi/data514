@@ -8,11 +8,155 @@ those cities.
 
 */
 
+
+/*
+origin_city
+
+
+
+numFlights
+
+percentage
+Aberdeen SD
+
+0
+
+0
+
+
+Cedar City UT
+
+0
+
+0
+
+
+Cordova AK
+
+0
+
+0
+
+
+Deadhorse AK
+
+0
+
+0
+
+
+Dickinson ND
+
+0
+
+0
+
+
+Dillingham AK
+
+0
+
+0
+
+
+El Centro CA
+
+0
+
+0
+
+
+Garden City KS
+
+0
+
+0
+
+
+Gillette WY
+
+0
+
+0
+
+
+Guam TT
+
+0
+
+0
+
+
+Hattiesburg/Laurel MS
+
+0
+
+0
+
+
+Hayden CO
+
+0
+
+0
+
+
+Hilo HI
+
+0
+
+0
+
+
+Hyannis MA
+
+0
+
+0
+
+
+Laramie WY
+
+0
+
+0
+
+
+Lewisburg WV
+
+0
+
+0
+
+
+Marthas Vineyard MA
+
+0
+
+0
+
+
+New Bern/Morehead/Beaufort NC
+
+0
+
+0
+
+
+Niagara Falls NY
+
+0
+
+0
+
+
+Pago Pago TT,0,0
+*/
 Select a.ogCity as origin_city,
 ISNULL(c.numAbove,0),
 ISNULL(b.numAbove,0),
 d.numFlights,
-(1-((ISNULL(c.numAbove+b.numAbove,0)*1.0)/d.numFlights*1.0)) as percentage from
+((ISNULL(b.numAbove,0)*1.0)/d.numFlights*1.0) as percentage from
 (
  Select Distinct FC.ogCity from allFlights as FC
 )
@@ -25,17 +169,16 @@ as b
 ON a.ogCity = b.ogCity
 LEFT JOIN
 (
-   Select Distinct FA.ogCity, Count(*) as numabove from allFlights as FA where FA.actualTime>180 group by FA.ogCity
-
+    Select Distinct FB.ogCity, Count(*) as numabove from allFlights as FB where FB.actualTime>180 group by FB.ogCity
 )
 as c
 ON b.ogCity = c.ogCity
-JOIN
+LEFT JOIN
 (
     Select Distinct FD.ogCity, Count(*) as numFlights from allFlights as FD group by FD.ogCity
 )
 as d
-ON c.ogCity = d.ogCity
+ON b.ogCity = d.ogCity
 order by percentage asc;
 --THE ABOVE IS CORRECT. FOR SOME REASON THE SOLUTION BELOW IS NOT THE SAME
 --alt solution
