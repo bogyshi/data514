@@ -49,3 +49,8 @@ instructor as i, teaches as t
 where i.username = t.username
 group by i.fname, i.lname
 order by count(distinct(t.dept)) asc;
+
+with
+(
+  Select
+)
