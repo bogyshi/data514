@@ -17,10 +17,28 @@ with a AS (
 Select distinct(a.destCity) as dest_city, a.ogCity as origin_city, a.actualTime as time
 from a inner join b ON a.ogCity = b.ogCity and a.actualTime = b.actualTime
 order by a.ogCity ASC, a.destCity ASC;
---this only outputs 329
--- further note, there are no duplicates, or if there are, there are equal number duplicates in both origin
--- and destination cities.
 
-
--- Question, are we asking for all possible end destinations one city can have with only one stop what that maximum flight time looks like?
--- OR are we asking for only the list of cities with the same if equal maximum length actual time?
+/*
+Rows: 329
+Time: 12s
+Minneapolis MN	Aberdeen SD	106
+Dallas/Fort Worth TX	Abilene TX	111
+Anchorage AK	Adak Island AK	471.37
+New York NY	Aguadilla PR	368.76
+Atlanta GA	Akron OH	408.69
+Atlanta GA	Albany GA	243.45
+Atlanta GA	Albany NY	390.31
+Houston TX	Albuquerque NM	492.81
+Atlanta GA	Alexandria LA	391.05
+Atlanta GA	Allentown/Bethlehem/Easton PA	456.95
+Detroit MI	Alpena MI	80
+Houston TX	Amarillo TX	390.73
+Barrow AK	Anchorage AK	490.01
+Atlanta GA	Appleton WI	405.07
+San Francisco CA	Arcata/Eureka CA	476.89
+Chicago IL	Asheville NC	279.81
+Cincinnati OH	Ashland WV	84
+Los Angeles CA	Aspen CO	304.59
+Honolulu HI	Atlanta GA	649
+Fort Lauderdale FL	Atlantic City NJ	212
+*/

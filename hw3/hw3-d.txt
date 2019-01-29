@@ -1,0 +1,5 @@
+From my so far limited experience, I think this DBMS on a cloud server has many advantages for those looking to quickly store data and 
+run queries without having to pay the high initial start up costs. However, I feel that as much as it could be useful to a small business
+there are many nuances a user would have to understand before investing intially. How to setup permissions in this particular environment,
+seamless executing, and so on. Overall, I think a small business would need a quite savvy DB manager to make any use of it which may be infeasible
+for small groups.

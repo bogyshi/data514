@@ -12,7 +12,8 @@ where C.cid IN
     F.ogCity = 'Seattle WA' and F.destCity = 'San Francisco CA'
   );
 /*
-carrier
+Rows: 4
+Time: 2s
 Alaska Airlines Inc.
 SkyWest Airlines Inc.
 United Air Lines Inc.
