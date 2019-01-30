@@ -39,5 +39,4 @@ Chico CA
 College Station/Bryan TX
 Columbia MO
 Columbus GA
-Columbus MS
 */

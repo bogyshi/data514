@@ -23,11 +23,12 @@ where F.destCity NOT IN
     and F1.destCity = F2.ogCity
     and F2.destCity <> 'Seattle WA')
   );
-  --took 19 seconds
 
 
 
 /*
+Rows: 4
+Time: 19s
 Hattiesburg/Laurel MS
 Devils Lake ND
 St. Augustine FL
