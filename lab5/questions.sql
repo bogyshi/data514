@@ -1,0 +1,1 @@
+--In figure 16.22 on page 788, why do we need to do a theta join on Stars in m1? it seems done without it
