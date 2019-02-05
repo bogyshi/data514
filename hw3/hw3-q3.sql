@@ -8,11 +8,13 @@ those cities.
 
 */
 
+
+
 Select a.ogCity as origin_city,
 --ISNULL(c.numAbove,0) as over3,
 --ISNULL(b.numAbove,0) as numnull,
 --d.numFlights,
-((ISNULL(c.numAbove,0)+(ISNULL(b.numAbove,0)*1.0))/d.numFlights*1.0) as percentage from
+(1-((ISNULL(c.numAbove,0)+(ISNULL(b.numAbove,0)*1.0))/d.numFlights*1.0)) as percentage from
 (
  Select Distinct FC.ogCity from allFlights as FC
 )
@@ -69,13 +71,13 @@ Select a.ogCity as origin_city,
  Select Distinct FC.ogCity from allFlights as FC
 )
 as a
-JOIN
+Left JOIN
 (
 Select Distinct FB.ogCity, Count(*) as numabove from allFlights as FB where FB.actualTime is NULL or FB.actualTime>180 group by FB.ogCity
 )
 as b
 ON a.ogCity = b.ogCity
-JOIN
+Left JOIN
 (
     Select Distinct FD.ogCity, Count(*) as numFlights from allFlights as FD group by FD.ogCity
 )
@@ -125,4 +127,15 @@ ON b.ogCity = c.ogCity;
 
 Affected rows: 208.
 It seems that all rows that were not found in each iteration are simple elimated. I want to ideally not have that be the case.
+*/
+/*
+Select f.ogCity as origin_city, ROUND((numAbove1+numAbove2)*100/numBelow,2) as perc 
+from
+(
+	Select 
+		(select count(f.flightID) from allFlights as f where f.actualTime is NULL group by f.ogCity)  as numAbove1,
+		(select  f.ogCity , count(f.flightID) from allFlights as f where f.actualTime > 180 group by f.ogCity)  as numAbove2 ,
+		(select f.ogCity , count(f.flightID) from allFlights as f group by f.ogCity) as numBelow from allFlights as f
+);
+
 */
