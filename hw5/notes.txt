@@ -1,0 +1,10 @@
+looks like the book action indicates montonically increasing reservation ids when inserted into a table. I think we took some notes that said we indicate using key word
+IDENTITY to specify this trend.
+
+The assignment says a possible solution is to keep a table that updates to the next available reservation number by UPDATE ing it by 1 each time
+It says specifcally to handle cases where two people try to reserve at the same time. meaning we have to lock this, probably using that
+"""begin transaction end transaction """ stuff mentioned in the book here .
+
+cancel/ pay interaction. Cancel refunds if already paid, so another lookup to check if they have paid, and if so, issue an update table to make sure a user is refunded properly.
+
+For the first task, create sql queries to create all tables and initialize them(ex reservationID at 0), and another to delete everything.
