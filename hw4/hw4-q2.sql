@@ -53,6 +53,6 @@ my insures relation represents the insures relationship in the ER diagram. This 
 so it isnt really feasible to combine the data in one of the two other relations
 
 2q2)
-My operates relation is different than the drives representation simply due to how a professional driver can drive 0 or many trucks, unlike our drives relation with
-nonprofessional drivers. Another way to think about it is that a professional driver operates at least one truck.
+My operates relation is different than the drives representation simply due to the one to many relationship between the professional driver and the truck.
+The relationship means, unlike the NonProfessionalDriver relationship, that a professional driver can only belong to one truck, but one truck can have many profesisonal drivers.
 */
