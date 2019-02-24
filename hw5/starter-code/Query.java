@@ -29,6 +29,12 @@ public class Query
   private static final String CHECK_FLIGHT_CAPACITY = "SELECT capacity FROM Flights WHERE fid = ?";
   private PreparedStatement checkFlightCapacityStatement;
 
+  private static final String SEARCH_QUERY = "SELECT TOP (?) year,month_id,day_of_month,carrier_id,flight_num,origin_city,actual_time "
+          + "FROM Flights "
+          + "WHERE origin_city = ? AND dest_city = ? AND day_of_month =  ? "
+          + "ORDER BY actual_time ASC"; //TODO adjust this so that it fits actual search criteria
+  private PreparedStatement safeSearchQueryStatement;
+
   // transactions
   private static final String BEGIN_TRANSACTION_SQL = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; BEGIN TRANSACTION;";
   private PreparedStatement beginTransactionStatement;
@@ -120,6 +126,7 @@ public class Query
     rollbackTransactionStatement = conn.prepareStatement(ROLLBACK_SQL);
 
     checkFlightCapacityStatement = conn.prepareStatement(CHECK_FLIGHT_CAPACITY);
+    safeSearchQueryStatement = conn.prepareStatement(SEARCH_QUERY);
 
     /* add here more prepare statements for all the other queries you need */
 		/* . . . . . . */
@@ -186,11 +193,17 @@ public class Query
    * in each search should always start from 0 and increase by 1.
    *
    * @see Flight#toString()
+   Flight: 2015,7,14,B6,1698,Seattle WA,294Flight: 2015,7,14,B6,498,Seattle WA,304Flight: 2005,7,14,AS,24,Seattle WA,308Flight: 2015,7,14,B6,998,Seattle WA,313Flight: 2015,7,14,AS,734,Seattle WA,315Flight: 2005,7,14,AS,12,Seattle WA,316Flight: 2015,7,14,AS,24,Seattle WA,319Flight: 2015,7,14,AS,12,Seattle WA,324Flight: 2015,7,14,B6,598,Seattle WA,340
+   Flight: 2015,7,14,B6,1698,Seattle WA,294Flight: 2015,7,14,B6,498,Seattle WA,304Flight: 2005,7,14,AS,24,Seattle WA,308Flight: 2015,7,14,B6,998,Seattle WA,313Flight: 2015,7,14,AS,734,Seattle WA,315Flight: 2005,7,14,AS,12,Seattle WA,316Flight: 2015,7,14,AS,24,Seattle WA,319Flight: 2015,7,14,AS,12,Seattle WA,324Flight: 2015,7,14,B6,598,Seattle WA,340
    */
   public String transaction_search(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
                                    int numberOfItineraries)
   {
-    return transaction_search_unsafe(originCity, destinationCity, directFlight, dayOfMonth, numberOfItineraries);
+    try{
+      return safeFlightQuery(originCity,destinationCity,directFlight,dayOfMonth,numberOfItineraries);
+    }
+    catch(SQLException e){ e.printStackTrace();}
+    return("invalid sql query!");
   }
 
   /**
@@ -358,4 +371,38 @@ public class Query
 
     return capacity;
   }
+
+  //works!!!
+  private String safeFlightQuery(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
+                                   int numberOfItineraries) throws SQLException
+  {
+    StringBuffer sb = new StringBuffer();
+
+    try
+    {
+      // one hop itineraries
+      safeSearchQueryStatement.clearParameters();
+      safeSearchQueryStatement.setInt(1,numberOfItineraries);
+      safeSearchQueryStatement.setString(2,originCity);
+      safeSearchQueryStatement.setString(3,destinationCity);
+      safeSearchQueryStatement.setInt(4,dayOfMonth);
+      ResultSet oneHopResults = safeSearchQueryStatement.executeQuery();
+
+      while (oneHopResults.next())
+      {
+        int result_year = oneHopResults.getInt("year");
+        int result_monthId = oneHopResults.getInt("month_id");
+        int result_dayOfMonth = oneHopResults.getInt("day_of_month");
+        String result_carrierId = oneHopResults.getString("carrier_id");
+        String result_flightNum = oneHopResults.getString("flight_num");
+        String result_originCity = oneHopResults.getString("origin_city");
+        int result_time = oneHopResults.getInt("actual_time");
+        sb.append("Flight: " + result_year + "," + result_monthId + "," + result_dayOfMonth + "," + result_carrierId + "," + result_flightNum + "," + result_originCity + "," + result_time);
+      }
+      oneHopResults.close();
+    } catch (SQLException e) { e.printStackTrace(); }
+
+    return sb.toString();
+  }
+
 }
