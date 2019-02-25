@@ -24,16 +24,47 @@ public class Query
   // Logged In User
   private String username; // customer username is unique
 
+  /*
+  TODO: storing user search iteneraries
+  Idea: upon query, update a table to hold a userIDs most recent query.
+  When that user wants to reserve a iten number, we just requery and grab the result with that index from the query.
+  This prevents us from storing the whole table for each user.
+  */
   // Canned queries
+
+  private static final String CHECK_USERNAME = "Select username from Users where username = ?";
+  private PreparedStatement checkUserStatement;
+
+  private static final String INSERT_USER = "INSERT INTO Users VALUES(?,?,?)";
+  private PreparedStatement insertUserStatement;
 
   private static final String CHECK_FLIGHT_CAPACITY = "SELECT capacity FROM Flights WHERE fid = ?";
   private PreparedStatement checkFlightCapacityStatement;
 
   private static final String SEARCH_QUERY = "SELECT TOP (?) year,month_id,day_of_month,carrier_id,flight_num,origin_city,actual_time "
           + "FROM Flights "
-          + "WHERE origin_city = ? AND dest_city = ? AND day_of_month =  ? "
+          + "WHERE origin_city = ? AND dest_city = ? AND day_of_month =  ? AND canceled = 0 "
           + "ORDER BY actual_time ASC"; //TODO adjust this so that it fits actual search criteria
   private PreparedStatement safeSearchQueryStatement;
+
+/*
+Basis for one stop queries
+Select DISTINCT F2.destCity as city
+from allFlights as F1, allFlights as F2
+where F1.ogCity = 'Seattle WA'
+and F1.destCity = F2.ogCity
+and F2.destCity <> 'Seattle WA'
+and F2.destCity
+NOT IN
+  (
+    Select Distinct FT.destCity from allFlights as FT
+    where FT.ogCity = 'Seattle WA'
+  );*/
+  private static final String ONE_STOP_QUERY = "SELECT TOP (?) year,month_id,day_of_month,carrier_id,flight_num,origin_city,actual_time "
+          + "FROM Flights as F1, Flights as F2 "
+          + "WHERE F1.origin_city = ? AND F1.dest_city = F2.origin_city AND F2.dest_city = ? AND day_of_month =  ? AND canceled = 0 "
+          + "ORDER BY actual_time ASC";
+  private PreparedStatement safeSearchQueryOneStopStatement;
 
   // transactions
   private static final String BEGIN_TRANSACTION_SQL = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; BEGIN TRANSACTION;";
@@ -126,7 +157,12 @@ public class Query
     rollbackTransactionStatement = conn.prepareStatement(ROLLBACK_SQL);
 
     checkFlightCapacityStatement = conn.prepareStatement(CHECK_FLIGHT_CAPACITY);
+    //the below handle our search queries.
     safeSearchQueryStatement = conn.prepareStatement(SEARCH_QUERY);
+    safeSearchQueryOneStopStatement = conn.prepareStatement(ONE_STOP_QUERY);
+    //the below handle creating a new customer account
+    insertUserStatement = conn.prepareStatement(INSERT_USER);
+    checkUserStatement = conn.prepareStatement(CHECK_USERNAME);
 
     /* add here more prepare statements for all the other queries you need */
 		/* . . . . . . */
@@ -157,10 +193,47 @@ public class Query
    *
    * @return either "Created user {@code username}\n" or "Failed to create user\n" if failed.
    */
+   //how do we handle throw exception within flight service? do we need t
   public String transaction_createCustomer (String username, String password, double initAmount)
   {
-    return "Failed to create user";
+    ResultSet userResult = null;
+    int success = 0;
+    if(initAmount<0)
+    {
+      return "Invalid Input: Can't create customer";
+    }
+    try{
+      beginTransaction();
+      checkUserStatement.clearParameters();
+      checkUserStatement.setString(1,username);
+      userResult = checkUserStatement.executeQuery();
+      commitTransaction();
+      if(userResult.next())
+      {
+        userResult.close();
+        return "Invalid Input: Username already exists";
+      }
+      success=0;
+      beginTransaction();
+      insertUserStatement.clearParameters();
+      insertUserStatement.setString(1,username);
+      insertUserStatement.setString(2,password);
+      insertUserStatement.setDouble(3,initAmount);
+      success= insertUserStatement.executeUpdate();
+      commitTransaction();
   }
+  catch(SQLException e) {e.printStackTrace();}
+  finally {
+    if (userResult != null) {
+      try {
+        userResult.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  return "Customer sucessfully added!";
+}
 
   /**
    * Implement the search function.
@@ -377,19 +450,37 @@ public class Query
                                    int numberOfItineraries) throws SQLException
   {
     StringBuffer sb = new StringBuffer();
-
+    int itenSoFar = 0;
+    ResultSet oneHopResults = null;
     try
     {
       // one hop itineraries
-      safeSearchQueryStatement.clearParameters();
-      safeSearchQueryStatement.setInt(1,numberOfItineraries);
-      safeSearchQueryStatement.setString(2,originCity);
-      safeSearchQueryStatement.setString(3,destinationCity);
-      safeSearchQueryStatement.setInt(4,dayOfMonth);
-      ResultSet oneHopResults = safeSearchQueryStatement.executeQuery();
+      if(directFlight)
+      {
+        beginTransaction();
+        safeSearchQueryStatement.clearParameters();
+        safeSearchQueryStatement.setInt(1,numberOfItineraries);
+        safeSearchQueryStatement.setString(2,originCity);
+        safeSearchQueryStatement.setString(3,destinationCity);
+        safeSearchQueryStatement.setInt(4,dayOfMonth);
+        oneHopResults = safeSearchQueryStatement.executeQuery();
+        commitTransaction();
+      }
+      else
+      {
+        beginTransaction();
+        safeSearchQueryStatement.clearParameters();
+        safeSearchQueryStatement.setInt(1,numberOfItineraries);
+        safeSearchQueryStatement.setString(2,originCity);
+        safeSearchQueryStatement.setString(3,destinationCity);
+        safeSearchQueryStatement.setInt(4,dayOfMonth);
+        oneHopResults = safeSearchQueryStatement.executeQuery();
+        commitTransaction();
+      }
 
       while (oneHopResults.next())
       {
+        itenSoFar+=1;
         int result_year = oneHopResults.getInt("year");
         int result_monthId = oneHopResults.getInt("month_id");
         int result_dayOfMonth = oneHopResults.getInt("day_of_month");
@@ -400,6 +491,31 @@ public class Query
         sb.append("Flight: " + result_year + "," + result_monthId + "," + result_dayOfMonth + "," + result_carrierId + "," + result_flightNum + "," + result_originCity + "," + result_time);
       }
       oneHopResults.close();
+      if(directFlight == false && itenSoFar<=numberOfItineraries)
+      {
+        //could make this cleaner by re calling the function and then appending the two rather than copying the code.
+        beginTransaction();
+        safeSearchQueryStatement.clearParameters();
+        safeSearchQueryStatement.setInt(1,numberOfItineraries-itenSoFar);
+        safeSearchQueryStatement.setString(2,originCity);
+        safeSearchQueryStatement.setString(3,destinationCity);
+        safeSearchQueryStatement.setInt(4,dayOfMonth);
+        oneHopResults = safeSearchQueryStatement.executeQuery();
+        commitTransaction();
+        while (oneHopResults.next())
+        {
+          itenSoFar+=1;
+          int result_year = oneHopResults.getInt("year");
+          int result_monthId = oneHopResults.getInt("month_id");
+          int result_dayOfMonth = oneHopResults.getInt("day_of_month");
+          String result_carrierId = oneHopResults.getString("carrier_id");
+          String result_flightNum = oneHopResults.getString("flight_num");
+          String result_originCity = oneHopResults.getString("origin_city");
+          int result_time = oneHopResults.getInt("actual_time");
+          sb.append("Flight: " + result_year + "," + result_monthId + "," + result_dayOfMonth + "," + result_carrierId + "," + result_flightNum + "," + result_originCity + "," + result_time);
+        }
+        oneHopResults.close();
+      }
     } catch (SQLException e) { e.printStackTrace(); }
 
     return sb.toString();
