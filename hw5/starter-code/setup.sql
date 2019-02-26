@@ -1,8 +1,8 @@
--- add all your SQL setup statements here. 
+-- add all your SQL setup statements here.
 
--- You can assume that the following base table has been created with data loaded for you when we test your submission 
+-- You can assume that the following base table has been created with data loaded for you when we test your submission
 -- (you still need to create and populate it in your instance however),
--- although you are free to insert extra ALTER COLUMN ... statements to change the column 
+-- although you are free to insert extra ALTER COLUMN ... statements to change the column
 -- names / types if you like.
 
 /*
