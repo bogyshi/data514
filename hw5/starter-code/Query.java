@@ -60,11 +60,11 @@ NOT IN
     Select Distinct FT.destCity from allFlights as FT
     where FT.ogCity = 'Seattle WA'
   );*/
-  private static final String ONE_STOP_QUERY = "SELECT TOP (?) F1.fid,F1.flight_num,F1.year,F1.month_id,F1.day_of_month,F1.carrier_id,F1.flight_num,F1.origin_city,F1.actual_time,F1.capacity"
-          + "F2.fid,F2.flight_num,F2.capacity,F2.actual_time,F2.carrier_id,F2.flightID,F2.price "
-          + "FROM Flights as F1, Flights as F2 "
+  private static final String ONE_STOP_QUERY = "SELECT TOP (?) F1.fid as f1id ,F1.flight_num as f1flightnum,F1.year as f1year,F1.month_id as f1month,F1.day_of_month as f1dom,F1.carrier_id as f1cid,F1.origin_city as f1oc,F1.actual_time as f1at,F1.capacity as f1c,F1.dest_city as f1dc, F1.price as f1price, "
+          + "F2.fid,F2.flight_num,F2.capacity,F2.actual_time,F2.carrier_id,F2.fid,F2.price,F2.origin_city,F2.dest_city "
+          + "FROM Flights F1, Flights F2 "
           + "WHERE F1.origin_city = ? AND F1.dest_city = F2.origin_city AND F2.dest_city = ? AND "
-          + "F2.day_of_month=F1.day_of_month and F1.day_of_month = ? AND canceled = 0 "
+          + "F2.day_of_month=F1.day_of_month and F1.day_of_month = ? AND F1.canceled = 0 AND F2.canceled = 0"
           + "ORDER BY (F1.actual_time+F2.actual_time) ASC,F1.fid ASC";
   private PreparedStatement safeSearchQueryOneStopStatement;
 
@@ -465,26 +465,27 @@ NOT IN
     catch(SQLException e) {e.printStackTrace();}
     while (oneStopResults.next())
     {
-      int result_year = oneStopResults.getInt("F1.year");
-      int result_monthId = oneStopResults.getInt("F1.month_id");
-      int result_dayOfMonth = oneStopResults.getInt("F1.day_of_month");
-      String result_carrierId1 = oneStopResults.getString("F1.carrier_id");
-      String result_originCity1 = oneStopResults.getString("F1.origin_city");
-      String result_destCity1 = oneStopResults.getString("F1.dest_city");
-      double price1 = oneStopResults.getDouble("F1.price");
-      int flightID1 = oneStopResults.getInt("F1.fid");
-      int flightNum1 = oneStopResults.getInt("F1.flight_num");
-      double result_time1 = oneStopResults.getDouble("F1.actual_time");
-      int capacity1 = oneStopResults.getInt("F1.capacity");
+
+      int result_year = oneStopResults.getInt("f1year");
+      int result_monthId = oneStopResults.getInt("f1month");
+      int result_dayOfMonth = oneStopResults.getInt("f1dom");
+      String result_carrierId1 = oneStopResults.getString("f1cid");
+      String result_originCity1 = oneStopResults.getString("f1oc");
+      String result_destCity1 = oneStopResults.getString("f1dc");
+      double price1 = oneStopResults.getDouble("f1price");
+      int flightID1 = oneStopResults.getInt("f1id");
+      int flightNum1 = oneStopResults.getInt("f1flightnum");
+      double result_time1 = oneStopResults.getDouble("f1at");
+      int capacity1 = oneStopResults.getInt("f1c");
       //now for the second item in the flight iten
-      String result_carrierId2 = oneStopResults.getString("F2.carrier_id");
-      String result_originCity2 = oneStopResults.getString("F2.origin_city");
-      String result_destCity2 = oneStopResults.getString("F2.dest_city");
-      double price2 = oneStopResults.getDouble("F2.price");
-      int flightID2 = oneStopResults.getInt("F2.fid");
-      int flightNum2 = oneStopResults.getInt("F2.flight_num");
-      double result_time2 = oneStopResults.getDouble("F2.actual_time");
-      int capacity2 = oneStopResults.getInt("F2.capacity");
+      String result_carrierId2 = oneStopResults.getString("carrier_id");
+      String result_originCity2 = oneStopResults.getString("origin_city");
+      String result_destCity2 = oneStopResults.getString("dest_city");
+      double price2 = oneStopResults.getDouble("price");
+      int flightID2 = oneStopResults.getInt("fid");
+      int flightNum2 = oneStopResults.getInt("flight_num");
+      double result_time2 = oneStopResults.getDouble("actual_time");
+      int capacity2 = oneStopResults.getInt("capacity");
       String date = result_year+"-"+result_monthId+"-"+result_dayOfMonth;
       double totalTime = result_time1+result_time2;
       sb.append("Itinerary " +itenSoFar+": 2 flight(s), " + totalTime + " minutes\n");
