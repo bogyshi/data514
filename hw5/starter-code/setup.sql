@@ -31,9 +31,26 @@ CREATE TABLE FLIGHTS
 */
 Create TABLE Users
 (
-	username varchar(100) PRIMARY KEY,
-	password varchar(100) NOT NULL,
+	username varchar(20) PRIMARY KEY,
+	password varchar(20) NOT NULL,
 	balance real
+)
+
+Create TABLE Capacities
+(
+	flightID int REFERENCES FLIGHTS(fid),
+	maxCapacity int,
+	currentCapacity int
+)
+
+Create TABLE UserSearches
+(
+	username varchar(20) REFERENCES Users(username),
+	origin_city varchar(100),
+	dest_city varchar(100),
+	direct_flight bit,
+	day_of_month int,
+	num_iten int
 )
 
 Create Table Itineraries

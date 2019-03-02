@@ -31,12 +31,32 @@ public class Query
   This prevents us from storing the whole table for each user.
   */
   // Canned queries
+  private static final String LOGIN_USER = "Select username from Users where username = ? and password = ?";
+  private PreparedStatement signInUserStatement;
 // only one query instantiated per flight service instance so i can store the username and password here!
   private static final String CHECK_USERNAME = "Select username from Users where username = ?";
   private PreparedStatement checkUserStatement;
 
   private static final String INSERT_USER = "INSERT INTO Users VALUES(?,?,?)";
   private PreparedStatement insertUserStatement;
+
+  private static final String INSERT_SEARCH = "INSERT INTO UserSearches VALUES(?,?,?,?,?,?)"; //TODO: how do i update several values in a table? or do i drop the row and then re add it?
+  private PreparedStatement insertSearchStatement;
+
+  private static final String GET_SEARCH = "Select * from UserSearches where username = ?";
+  private PreparedStatement getSearchStatement;
+
+  private static final String UPDATE_CAPACITY = "UPDATE Capacities SET currentCapacity = ? where flightID = ?";
+  private PreparedStatement updateCapacityStatement;
+
+  private static final String INSERT_CAPACITY= "INSERT INTO Capacities VALUES(?,?,?)";
+  private PreparedStatement insertCapacityStatement;
+
+  private static final String GET_CAPACITY= "Select * from Capacities where flightID = ?";
+  private PreparedStatement getCapacityStatement;
+
+  private static final String DROP_SEARCH = "DELETE FROM UserSearches where username = ?";//TODO: how do i update several values in a table? or do i drop the row and then re add it?
+  private PreparedStatement dropSearchStatement;
 
   private static final String CHECK_FLIGHT_CAPACITY = "SELECT capacity FROM Flights WHERE fid = ?";
   private PreparedStatement checkFlightCapacityStatement;
@@ -165,6 +185,13 @@ NOT IN
     //the below handle creating a new customer account
     insertUserStatement = conn.prepareStatement(INSERT_USER);
     checkUserStatement = conn.prepareStatement(CHECK_USERNAME);
+    signInUserStatement = conn.prepareStatement(LOGIN_USER);
+    insertSearchStatement = conn.prepareStatement(INSERT_SEARCH);
+    dropSearchStatement = conn.prepareStatement(DROP_SEARCH);
+    insertCapacityStatement = conn.prepareStatement(INSERT_CAPACITY);
+    getCapacityStatement = conn.prepareStatement(GET_CAPACITY);
+    getSearchStatement = conn.prepareStatement(GET_SEARCH);
+    updateCapacityStatement = conn.prepareStatement(UPDATE_CAPACITY);
 
     /* add here more prepare statements for all the other queries you need */
 		/* . . . . . . */
@@ -183,6 +210,33 @@ NOT IN
    */
   public String transaction_login(String username, String password)
   {
+    ResultSet userResult = null;
+    int success = 0;
+    try{
+      beginTransaction();
+      signInUserStatement.clearParameters();
+      signInUserStatement.setString(1,username);
+      signInUserStatement.setString(2,password);
+      userResult = signInUserStatement.executeQuery();
+      commitTransaction();
+      if(userResult.next())
+      {
+        userResult.close();
+        this.username = username;//may need to do something here
+        return "User signed in sucessfully";
+      }
+      success=0;
+  }
+  catch(SQLException e) {e.printStackTrace();}
+  finally {
+    if (userResult != null) {
+      try {
+        userResult.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
     return "Login failed\n";
   }
 
@@ -342,10 +396,152 @@ NOT IN
    * And if booking succeeded, return "Booked flight(s), reservation ID: [reservationId]\n" where
    * reservationId is a unique number in the reservation system that starts from 1 and increments by 1 each time a
    * successful reservation is made by any user in the system.
+
+   username varchar(20) REFERENCES Users(username),
+ 	origin_city varchar(100),
+ 	dest_city varchar(100),
+ 	direct_flight bit,
+ 	day_of_month int,
+ 	num_iten int
    */
   public String transaction_book(int itineraryId)
   {
-    return "Booking failed\n";
+    //first, we check if the flight is in the capacity table
+    if(username == null)
+    {
+      return("Cannot book reservations, not logged in\n");
+    }
+    //unusre if we have to (deal with phantomn reads and such
+    ResultSet checkIten = null;
+    ResultSet directResults = null;
+    ResultSet oneStopResults = null;
+    boolean res = false;
+    String debug="whoops";
+    int itenSoFar = 0;
+    int flightID1 = -1;
+    int flightID2 = -1;
+    int cap1 = -1;
+    int cap2 = -1;
+    boolean pass = false;
+    try
+    {
+      getSearchStatement.clearParameters();
+      getSearchStatement.setString(1,username);
+      checkIten = getSearchStatement.executeQuery();
+      res = checkIten.next();
+      if(res==false)
+      {
+        return "No such itinerary " + itineraryId +"\n";
+      }
+      String ogc = checkIten.getString("origin_city");
+      String ogdc = checkIten.getString("dest_city");
+      boolean df = checkIten.getBoolean("direct_flight");
+      int dom = checkIten.getInt("day_of_month");
+      int numIten = checkIten.getInt("num_iten");
+      checkIten.close();
+
+      if(numIten <itineraryId){return "No such itinerary " + itineraryId +"\n";}
+      safeSearchQueryStatement.clearParameters();
+      safeSearchQueryStatement.setInt(1,numIten);
+      safeSearchQueryStatement.setString(2,ogc);
+      safeSearchQueryStatement.setString(3,ogdc);
+      safeSearchQueryStatement.setInt(4,dom);
+      directResults = safeSearchQueryStatement.executeQuery();
+      while(directResults.next())
+      {
+        if(itenSoFar == itineraryId)
+        {
+          flightID1 = directResults.getInt("fid");
+          cap1= directResults.getInt("capacity");
+        }
+        itenSoFar+=1;
+      }
+      directResults.close();
+      if(itenSoFar<itineraryId && (df==false))
+        {
+        safeSearchQueryOneStopStatement.clearParameters();
+        safeSearchQueryOneStopStatement.setInt(1,numIten);
+        safeSearchQueryOneStopStatement.setString(2,ogc);
+        safeSearchQueryOneStopStatement.setString(3,ogdc);
+        safeSearchQueryOneStopStatement.setInt(4,dom);
+        oneStopResults = safeSearchQueryOneStopStatement.executeQuery();
+        while(oneStopResults.next())
+        {
+          if(itenSoFar==itineraryId)
+          {
+            flightID1 = oneStopResults.getInt("f1id");
+            cap1=oneStopResults.getInt("f1c");
+            flightID2 = oneStopResults.getInt("fid");
+            cap2=oneStopResults.getInt("f1c");
+
+          }
+          itenSoFar+=1;
+        }
+        oneStopResults.close();
+      }
+
+      if(flightID1 >=0)
+      {
+        pass = checkCapTable(flightID1,cap1);
+      }
+    }
+    catch(SQLException e) {e.printStackTrace();}
+    if(pass)
+    {
+      debug = "Flight booked, still gotta check for reservations tho.\n";
+    }
+    //then we either add it to the table and then check capacity remaining
+    //then we update the table to have one more in the capacitysofar
+    //donezo kid
+    return debug;
+  }
+
+  private boolean checkCapTable(int flightID,int maxCap)
+  {
+    ResultSet checkPres = null;
+    int cap =-1;
+    boolean pass=false;
+    try
+    {
+    getCapacityStatement.clearParameters();
+    getCapacityStatement.setInt(1,flightID);
+    beginTransaction();
+    checkPres = getCapacityStatement.executeQuery();
+    if(checkPres.next())
+    {
+      cap = checkPres.getInt("currentCapacity");
+      if(cap+1<maxCap)
+      {
+        pass = true;
+      }
+      cap+=1;
+      updateCapacityStatement.clearParameters();
+      updateCapacityStatement.setInt(1,cap);
+      updateCapacityStatement.setInt(2,flightID);
+      updateCapacityStatement.executeUpdate();
+    }
+    else
+    {
+      if(maxCap == 0)
+      {
+
+      }
+      else
+      {
+        insertCapacityStatement.clearParameters();
+        insertCapacityStatement.setInt(1,flightID);
+        insertCapacityStatement.setInt(2,maxCap);
+        insertCapacityStatement.setInt(3,1);
+        insertCapacityStatement.executeUpdate();
+        pass=true;
+      }
+    }
+    commitTransaction();
+    insertCapacityStatement.close();
+    updateCapacityStatement.close();
+  }
+  catch(SQLException e) {e.printStackTrace();}
+    return pass;
   }
 
   /**
@@ -388,6 +584,11 @@ NOT IN
    */
   public String transaction_cancel(int reservationId)
   {
+    if(username == null)
+    {
+      return("Cannot cancel reservations, not logged in \n");
+    }
+    //return("Canceled reservation" + reservationId);
     return "Failed to cancel reservation " + reservationId;
   }
 
@@ -408,6 +609,11 @@ NOT IN
    */
   public String transaction_pay (int reservationId)
   {
+    if(username == null)
+    {
+      return("Cannot pay, not logged in\n");
+    }
+    //return("Cannot find unpaid reservation " + reservationId + " under user: " + username + "\n");
       return "Failed to pay for reservation " + reservationId + "\n";
   }
 
@@ -447,20 +653,20 @@ NOT IN
     return capacity;
   }
 
-  private int oneStopFlightQuery(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
+  private void oneStopFlightQuery(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
                                    int numberOfItineraries,int numSoFar,StringBuffer sb) throws SQLException
   {
     int itenSoFar = numSoFar;
     ResultSet oneStopResults = null;
     try{
-      beginTransaction();
+      //beginTransaction();//unnecessary
       safeSearchQueryOneStopStatement.clearParameters();
       safeSearchQueryOneStopStatement.setInt(1,numberOfItineraries-itenSoFar);
       safeSearchQueryOneStopStatement.setString(2,originCity);
       safeSearchQueryOneStopStatement.setString(3,destinationCity);
       safeSearchQueryOneStopStatement.setInt(4,dayOfMonth);
       oneStopResults = safeSearchQueryOneStopStatement.executeQuery();
-      commitTransaction();
+      //commitTransaction();//unnecessary
     }
     catch(SQLException e) {e.printStackTrace();}
     while (oneStopResults.next())
@@ -498,23 +704,23 @@ NOT IN
 
     }
     oneStopResults.close();
-    return itenSoFar;
+    //return itenSoFar;
   }
 
-  private void directFlightQuery(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
+  private int directFlightQuery(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
                                    int numberOfItineraries,int numSoFar,StringBuffer sb) throws SQLException
   {
     int itenSoFar = numSoFar;
     ResultSet directResults = null;
     try{
-      beginTransaction();
+      //beginTransaction();//unnecessary
       safeSearchQueryStatement.clearParameters();
       safeSearchQueryStatement.setInt(1,numberOfItineraries-itenSoFar);
       safeSearchQueryStatement.setString(2,originCity);
       safeSearchQueryStatement.setString(3,destinationCity);
       safeSearchQueryStatement.setInt(4,dayOfMonth);
       directResults = safeSearchQueryStatement.executeQuery();
-      commitTransaction();
+      //commitTransaction();
     }
     catch(SQLException e) {e.printStackTrace();}
     while (directResults.next())
@@ -538,10 +744,14 @@ NOT IN
       itenSoFar+=1;
 
     }
-
     directResults.close();
+
+    return itenSoFar;
+
   }
   //works!!!
+
+  //TODO, is this zero indexed? if they ask for ten itineraries, we will bre returning numbers 0 through 9.
   private String safeFlightQuery(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
                                    int numberOfItineraries) throws SQLException
   {
@@ -551,24 +761,44 @@ NOT IN
     try
     {
       // one hop itineraries
-      if(directFlight)
-      {
-        directFlightQuery(originCity,destinationCity,directFlight,dayOfMonth,numberOfItineraries,0,sb);
-        //works
-        //TODO: implement and recycle code to make it work for one stop
-      }
-      else
-      {
-        itenSoFar = oneStopFlightQuery(originCity,destinationCity,directFlight,dayOfMonth,numberOfItineraries,0,sb);
-      }
-
+      itenSoFar = directFlightQuery(originCity,destinationCity,directFlight,dayOfMonth,numberOfItineraries,0,sb);
       if(directFlight == false && itenSoFar<=numberOfItineraries)
       {
-        directFlightQuery(originCity,destinationCity,directFlight,dayOfMonth,numberOfItineraries,itenSoFar,sb);
+        oneStopFlightQuery(originCity,destinationCity,directFlight,dayOfMonth,numberOfItineraries,itenSoFar,sb);
+      }
+
+      if(username != null)
+      {
+        insertUserQuery(originCity,destinationCity,directFlight,dayOfMonth,numberOfItineraries);
       }
     } catch (SQLException e) { e.printStackTrace(); }
 
     return sb.toString();
   }
+
+  private void insertUserQuery(String originCity, String destinationCity, boolean directFlight, int dayOfMonth,
+                                   int numberOfItineraries)
+   {
+     ResultSet insertQuery = null;
+     try
+     {
+       beginTransaction();
+       //first we check / drop the row with this username associated with it
+       dropSearchStatement.clearParameters();
+       dropSearchStatement.setString(1,username);
+
+       dropSearchStatement.executeUpdate();
+       insertSearchStatement.clearParameters();
+       insertSearchStatement.setString(1,username);
+       insertSearchStatement.setString(2,originCity);
+       insertSearchStatement.setString(3,destinationCity);
+       insertSearchStatement.setBoolean(4,directFlight);
+       insertSearchStatement.setInt(5,dayOfMonth);
+       insertSearchStatement.setInt(6,numberOfItineraries);
+       insertSearchStatement.executeUpdate();
+       //then we add our new search query and release.
+       commitTransaction();
+     } catch (SQLException e) { e.printStackTrace(); }
+   }
 
 }
