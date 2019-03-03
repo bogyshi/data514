@@ -7,3 +7,5 @@ Drop Table UserSearches;
 DROP Table Reservations;
 
 Drop Table Capacities;
+
+Drop Table ReservationIDCounter;

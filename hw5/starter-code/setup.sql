@@ -43,6 +43,12 @@ Create TABLE Capacities
 	currentCapacity int
 )
 
+Create Table ReservationIDCounter(
+	currentIDs int
+)
+
+INSERT into ReservationIDCounter VALUES(1)
+
 Create TABLE UserSearches
 (
 	username varchar(20) REFERENCES Users(username),
@@ -63,7 +69,9 @@ Create Table Itineraries
 Create Table Reservations
 (
 	reservationID int PRIMARY KEY,
+	username varchar(20) REFERENCES Users(username),
+	flightDay int,
 	flight1 int REFERENCES FLIGHTS(fid),
-	flight2 int REFERENCES FLIGHTS(fid),
+	flight2 int REFERENCES FLIGHTS(fid) NULL,
 	paid bit
 )

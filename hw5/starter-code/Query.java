@@ -33,9 +33,33 @@ public class Query
   // Canned queries
   private static final String LOGIN_USER = "Select username from Users where username = ? and password = ?";
   private PreparedStatement signInUserStatement;
+
+  private static final String DROP_RESERVATION = "DELETE FROM Reservations where reservationID = ?";
+  private PreparedStatement dropReservationStatement;
 // only one query instantiated per flight service instance so i can store the username and password here!
   private static final String CHECK_USERNAME = "Select username from Users where username = ?";
   private PreparedStatement checkUserStatement;
+
+  private static final String GET_USER_ACCT = "Select * from Users where username = ?";
+  private PreparedStatement getUserAcctStatement;
+
+  private static final String UPDATE_USER_ACCT = "UPDATE Users SET balance = ? where username = ?";
+  private PreparedStatement updateUserAcctStatement;
+
+  private static final String UPDATE_RESERVATION_PAID="UPDATE Reservations SET paid = ? where username = ? and reservationID = ?";
+  private PreparedStatement updateReservationPaidStatement;
+
+  private static final String INSERT_RESERVATION = "INSERT INTO Reservations VALUES(?,?,?,?,?,?)";
+  private PreparedStatement insertReservationStatement;
+
+  private static final String GET_RESERVATIONS = "Select * from Reservations where username = ? ORDER BY reservationID";
+  private PreparedStatement getReservationsStatement;
+
+  private static final String GET_RESERVATIONID = "Select * from ReservationIDCounter";
+  private PreparedStatement getReservationIDStatement;
+
+  private static final String UPDATE_RESERVATIONID = "UPDATE ReservationIDCounter SET currentIDs = ?";
+  private PreparedStatement updateReservationIDStatement;
 
   private static final String INSERT_USER = "INSERT INTO Users VALUES(?,?,?)";
   private PreparedStatement insertUserStatement;
@@ -45,6 +69,9 @@ public class Query
 
   private static final String GET_SEARCH = "Select * from UserSearches where username = ?";
   private PreparedStatement getSearchStatement;
+
+  private static final String GET_FLIGHT = "Select * from Flights where fid = ?";
+  private PreparedStatement getFlightStatement;
 
   private static final String UPDATE_CAPACITY = "UPDATE Capacities SET currentCapacity = ? where flightID = ?";
   private PreparedStatement updateCapacityStatement;
@@ -83,7 +110,7 @@ NOT IN
   private static final String ONE_STOP_QUERY = "SELECT TOP (?) F1.fid as f1id ,F1.flight_num as f1flightnum,F1.year as f1year,F1.month_id as f1month,F1.day_of_month as f1dom,F1.carrier_id as f1cid,F1.origin_city as f1oc,F1.actual_time as f1at,F1.capacity as f1c,F1.dest_city as f1dc, F1.price as f1price, "
           + "F2.fid,F2.flight_num,F2.capacity,F2.actual_time,F2.carrier_id,F2.fid,F2.price,F2.origin_city,F2.dest_city "
           + "FROM Flights F1, Flights F2 "
-          + "WHERE F1.origin_city = ? AND F1.dest_city = F2.origin_city AND F2.dest_city = ? AND "
+          + "WHERE F1.origin_city = ? AND F1.dest_city = F2.origin_city AND F2.dest_city = ? AND F1.year = F2.year AND "
           + "F2.day_of_month=F1.day_of_month and F1.day_of_month = ? AND F1.canceled = 0 AND F2.canceled = 0"
           + "ORDER BY (F1.actual_time+F2.actual_time) ASC,F1.fid ASC";
   private PreparedStatement safeSearchQueryOneStopStatement;
@@ -192,7 +219,15 @@ NOT IN
     getCapacityStatement = conn.prepareStatement(GET_CAPACITY);
     getSearchStatement = conn.prepareStatement(GET_SEARCH);
     updateCapacityStatement = conn.prepareStatement(UPDATE_CAPACITY);
-
+    updateReservationIDStatement = conn.prepareStatement(UPDATE_RESERVATIONID);
+    getReservationIDStatement = conn.prepareStatement(GET_RESERVATIONID);
+    getReservationsStatement = conn.prepareStatement(GET_RESERVATIONS);
+    getFlightStatement = conn.prepareStatement(GET_FLIGHT);
+    insertReservationStatement = conn.prepareStatement(INSERT_RESERVATION);
+    getUserAcctStatement = conn.prepareStatement(GET_USER_ACCT);
+    updateUserAcctStatement = conn.prepareStatement(UPDATE_USER_ACCT);
+    updateReservationPaidStatement = conn.prepareStatement(UPDATE_RESERVATION_PAID);
+    dropReservationStatement = conn.prepareStatement(DROP_RESERVATION);
     /* add here more prepare statements for all the other queries you need */
 		/* . . . . . . */
   }
@@ -382,6 +417,33 @@ NOT IN
     return sb.toString();
   }
 
+
+  private boolean checkReserveDay(int dom)
+  {
+    ResultSet reservs = null;
+    try
+    {
+      beginTransaction();
+      getReservationsStatement.clearParameters();
+      getReservationsStatement.setString(1,username);
+      reservs = getReservationsStatement.executeQuery();
+      commitTransaction();
+      while(reservs.next())
+      {
+        if(reservs.getInt("flightDay")==dom)
+        {
+          return false;
+        }
+      }
+      reservs.close();
+    }
+    catch(SQLException e)
+    {
+      e.printStackTrace();
+    }
+    return true;
+  }
+
   /**
    * Implements the book itinerary function.
    *
@@ -422,6 +484,8 @@ NOT IN
     int flightID2 = -1;
     int cap1 = -1;
     int cap2 = -1;
+    int resID = -1;
+    int dom=-1;
     boolean pass = false;
     try
     {
@@ -436,11 +500,11 @@ NOT IN
       String ogc = checkIten.getString("origin_city");
       String ogdc = checkIten.getString("dest_city");
       boolean df = checkIten.getBoolean("direct_flight");
-      int dom = checkIten.getInt("day_of_month");
+      dom = checkIten.getInt("day_of_month");
       int numIten = checkIten.getInt("num_iten");
       checkIten.close();
-
       if(numIten <itineraryId){return "No such itinerary " + itineraryId +"\n";}
+      if(checkReserveDay(dom)==false){return "You cannot book two flights in the same day\n";}
       safeSearchQueryStatement.clearParameters();
       safeSearchQueryStatement.setInt(1,numIten);
       safeSearchQueryStatement.setString(2,ogc);
@@ -472,7 +536,7 @@ NOT IN
             flightID1 = oneStopResults.getInt("f1id");
             cap1=oneStopResults.getInt("f1c");
             flightID2 = oneStopResults.getInt("fid");
-            cap2=oneStopResults.getInt("f1c");
+            cap2=oneStopResults.getInt("capacity");
 
           }
           itenSoFar+=1;
@@ -482,13 +546,28 @@ NOT IN
 
       if(flightID1 >=0)
       {
+        System.out.println(flightID1);
+        System.out.println(flightID2);
         pass = checkCapTable(flightID1,cap1);
+        if(pass && flightID2 != -1)
+        {
+          pass = checkCapTable(flightID2,cap2);
+        }
+        else if(!pass)
+        {
+          return("Booking failed\n");
+        }
       }
     }
     catch(SQLException e) {e.printStackTrace();}
-    if(pass)
+    if(!pass)
     {
-      debug = "Flight booked, still gotta check for reservations tho.\n";
+      debug = "Booking failed\n";
+    }
+    else
+    {
+      resID = insertReservation(flightID1,flightID2,dom);
+      debug = "Booked flight(s), reservation ID: "+resID+"\n";
     }
     //then we either add it to the table and then check capacity remaining
     //then we update the table to have one more in the capacitysofar
@@ -496,11 +575,59 @@ NOT IN
     return debug;
   }
 
+  private int insertReservation(int flightID1, int flightID2, int dayOfMonth)
+  {
+    int tr = -1;
+    int newID = -1;
+    ResultSet temp = null;
+    try {
+    beginTransaction();
+    getReservationIDStatement.clearParameters();
+    temp = getReservationIDStatement.executeQuery();
+    if(temp.next())
+    {
+      tr = temp.getInt("currentIDs");
+    }
+    else
+    {
+      return -1;
+    }
+    newID = tr+1;
+    insertReservationStatement.clearParameters();
+    insertReservationStatement.setInt(1,tr);
+    insertReservationStatement.setString(2,username);
+    insertReservationStatement.setInt(3,dayOfMonth);
+    insertReservationStatement.setInt(4,flightID1);
+    if(flightID2<0)
+    {
+      insertReservationStatement.setNull(5,java.sql.Types.INTEGER);
+    }
+    else
+    {
+      insertReservationStatement.setInt(5,flightID2);
+    }
+    insertReservationStatement.setBoolean(6,false);
+    insertReservationStatement.executeUpdate();
+    updateReservationIDStatement.clearParameters();
+    updateReservationIDStatement.setInt(1,newID);
+    updateReservationIDStatement.executeUpdate();
+    temp.close();
+    commitTransaction();
+  }
+  catch(SQLException e)
+  {
+    e.printStackTrace();
+  }
+    return tr;
+  }
+
   private boolean checkCapTable(int flightID,int maxCap)
   {
     ResultSet checkPres = null;
     int cap =-1;
     boolean pass=false;
+    System.out.println(flightID);
+    System.out.println(maxCap);
     try
     {
     getCapacityStatement.clearParameters();
@@ -510,9 +637,13 @@ NOT IN
     if(checkPres.next())
     {
       cap = checkPres.getInt("currentCapacity");
-      if(cap+1<maxCap)
+      if(cap+1<=maxCap)
       {
         pass = true;
+      }
+      else
+      {
+        return false;
       }
       cap+=1;
       updateCapacityStatement.clearParameters();
@@ -537,10 +668,17 @@ NOT IN
       }
     }
     commitTransaction();
-    insertCapacityStatement.close();
-    updateCapacityStatement.close();
   }
   catch(SQLException e) {e.printStackTrace();}
+  finally {
+    if (checkPres != null) {
+      try {
+        checkPres.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
     return pass;
   }
 
@@ -567,7 +705,98 @@ NOT IN
    */
   public String transaction_reservations()
   {
-    return "Failed to retrieve reservations\n";
+    if(username == null)
+    {
+      return "Cannot view reservations, not logged in\n";
+    }
+    StringBuffer sb = new StringBuffer();
+    int numreservs = 0;
+
+    try
+    {
+      ResultSet reservs=null;
+      ResultSet flight1=null;
+      ResultSet flight2=null;
+      int flightID1 = -1;
+      int flightID2 = -1;
+      int resID = -1;
+      int dom;
+      int mid;
+      String ogc;
+      String dc;
+      int year;
+      String carrier;
+      boolean paid = false;
+      int flightNum;
+      double price;
+      double at;
+      int capacity;
+      getReservationsStatement.clearParameters();
+      getReservationsStatement.setString(1,username);
+      reservs = getReservationsStatement.executeQuery();
+      while(reservs.next())
+      {
+        resID = reservs.getInt("reservationID");
+        paid = reservs.getBoolean("paid");
+        sb.append("Reservation " + resID + " paid: " + paid+":\n");
+        flightID1 = reservs.getInt("flight1");
+        flightID2 = reservs.getInt("flight2");
+        getFlightStatement.clearParameters();
+        getFlightStatement.setInt(1,flightID1);
+        flight1 = getFlightStatement.executeQuery();
+        if(!flight1.next())
+        {
+          System.out.println("wuhoh");
+          return null;
+        }
+        year = flight1.getInt("year");
+        mid = flight1.getInt("month_id");
+        dom = flight1.getInt("day_of_month");
+        carrier = flight1.getString("carrier_id");
+        flightNum = flight1.getInt("flight_num");
+        ogc = flight1.getString("origin_city");
+        dc = flight1.getString("dest_city");
+        price = flight1.getDouble("price");
+        at = flight1.getDouble("actual_time");
+        capacity = flight1.getInt("capacity");
+        String date = year+"-"+mid+"-"+dom;
+        sb.append("ID: " + flightID1 + " Date: " + date + " Carrier: " +carrier+" Number: "+flightNum+" Origin: " +ogc +"\n");
+        sb.append("Dest: " + dc+" Duration: " + at +" Capacity: "+ capacity+" Price: "+price+"\n");
+        flight1.close();
+        if(flightID2>0)
+        {
+          getFlightStatement.clearParameters();
+          getFlightStatement.setInt(1,flightID2);
+          flight1 = getFlightStatement.executeQuery();
+          if(!flight1.next())
+          {
+            System.out.println("wuhoh2");
+            return null;
+          }
+          year = flight1.getInt("year");
+          mid = flight1.getInt("month_id");
+          dom = flight1.getInt("day_of_month");
+          carrier = flight1.getString("carrier_id");
+          flightNum = flight1.getInt("flight_num");
+          ogc = flight1.getString("origin_city");
+          dc = flight1.getString("dest_city");
+          price = flight1.getDouble("price");
+          at = flight1.getDouble("actual_time");
+          capacity = flight1.getInt("capacity");
+          date = year+"-"+mid+"-"+dom;
+          sb.append("ID: " + flightID2 + " Date: " + date + " Carrier: " +carrier+" Number: "+flightNum+" Origin: " +ogc +"\n");
+          sb.append("Dest: " + dc+" Duration: " + at +" Capacity: "+ capacity+" Price: "+price+"\n");
+        }
+        numreservs+=1;
+      }
+      reservs.close();
+  }
+  catch(SQLException e){e.printStackTrace();}
+  if(numreservs<=0)
+  {
+    return "No reservations found\n";
+  }
+  return sb.toString();
   }
 
   /**
@@ -584,12 +813,150 @@ NOT IN
    */
   public String transaction_cancel(int reservationId)
   {
+    String resMessage = "Failed to cancel reservation " + reservationId;
     if(username == null)
     {
       return("Cannot cancel reservations, not logged in \n");
     }
+    ResultSet reservs = null;
+    ResultSet flights = null;
+    boolean pass = false;
+    int flightID1= 0;
+    int flightID2 =0;
+    double price1=0;
+    double price2=0;
+    boolean paid = false;
+    try
+    {
+      beginTransaction();
+      getReservationsStatement.clearParameters();
+      getReservationsStatement.setString(1,username);
+      reservs = getReservationsStatement.executeQuery();
+      while(reservs.next())
+      {
+        if(reservs.getInt("reservationID")==reservationId)
+        {
+          paid = reservs.getBoolean("paid");
+          flightID1 = reservs.getInt("flight1");
+          flightID2 = reservs.getInt("flight2");
+          if(paid)
+          {
+            getFlightStatement.clearParameters();
+            getFlightStatement.setInt(1,flightID1);
+            flights = getFlightStatement.executeQuery();
+            if(flights.next())
+            {
+              price1 = flights.getDouble("price");
+              pass=true;
+            }
+            if(pass && flightID2>0)
+            {
+              flights.close();
+              getFlightStatement.clearParameters();
+              getFlightStatement.setInt(1,flightID2);
+              flights = getFlightStatement.executeQuery();
+              if(flights.next())
+              {
+                price2 = flights.getDouble("price");
+              }
+              else
+              {
+                pass = false;
+              }
+            }
+          }
+          break;
+        }
+      }
+      if(reservs!=null){reservs.close();}
+      if(paid && pass)
+      {
+        double totalCost = price1+price2;
+        pass = refundReservation(totalCost,reservationId);
+        if(!pass)
+        {
+          System.out.println("wuhoh3!");
+        }
+      }
+      if(pass)
+      {
+        handleCancelation(flightID1);
+        handleCancelation(flightID2);
+        dropReservationStatement.clearParameters();
+        dropReservationStatement.setInt(1,reservationId);
+        dropReservationStatement.executeUpdate();
+        resMessage = "Canceled reservation "+reservationId;
+      }
+      commitTransaction();
+
+    }
+    catch(SQLException e)
+    {
+      e.printStackTrace();
+    }
+    finally {
+      if (flights != null) {
+        try {
+          flights.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      if (reservs != null) {
+        try {
+          reservs.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
     //return("Canceled reservation" + reservationId);
-    return "Failed to cancel reservation " + reservationId;
+    return resMessage;
+  }
+
+  private boolean handleCancelation(int flightID)
+  {
+    ResultSet checkPres = null;
+    int cap =-1;
+    boolean pass=false;
+    try
+    {
+    getCapacityStatement.clearParameters();
+    getCapacityStatement.setInt(1,flightID);
+    checkPres = getCapacityStatement.executeQuery();
+    if(checkPres.next())
+    {
+      cap = checkPres.getInt("currentCapacity");
+      if(cap-1>=0)
+      {
+        pass = true;
+      }
+      else
+      {
+        return false;
+      }
+      cap-=1;
+      updateCapacityStatement.clearParameters();
+      updateCapacityStatement.setInt(1,cap);
+      updateCapacityStatement.setInt(2,flightID);
+      updateCapacityStatement.executeUpdate();
+    }
+    else
+    {
+      System.out.println("This really shouldnt happen ever");
+    }
+  }
+  catch(SQLException e) {e.printStackTrace();}
+  finally {
+    if (checkPres != null) {
+      try {
+        checkPres.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+    return pass;
   }
 
   /**
@@ -613,10 +980,178 @@ NOT IN
     {
       return("Cannot pay, not logged in\n");
     }
+    String resMessage = "";
+    ResultSet reservs = null;
+    ResultSet flights = null;
+    double price1=0;
+    double price2=0;
+    double[] remaining = {0,0};
+    boolean pass = false;
+    try
+    {
+      beginTransaction();//were gonna hold onto this until the very end
+      getReservationsStatement.clearParameters();
+      getReservationsStatement.setString(1,username);
+      reservs = getReservationsStatement.executeQuery();
+      while(reservs.next())
+      {
+        if(reservs.getInt("reservationID")==reservationId)
+        {
+          getFlightStatement.clearParameters();
+          getFlightStatement.setInt(1,reservs.getInt("flight1"));
+          flights = getFlightStatement.executeQuery();
+          if(flights.next())
+          {
+            price1 = flights.getDouble("price");
+            pass=true;
+          }
+          if(pass && reservs.getInt("flight2")>0)
+          {
+            flights.close();
+            getFlightStatement.clearParameters();
+            getFlightStatement.setInt(1,reservs.getInt("flight2"));
+            flights = getFlightStatement.executeQuery();
+            if(flights.next())
+            {
+              price2 = flights.getDouble("price");
+            }
+            else
+            {
+              pass = false;
+            }
+          }
+          break;
+
+        }
+      }
+      if(reservs!=null){reservs.close();}
+      if(pass)
+      {
+        double totalCost = price1+price2;
+        remaining = payReservation(totalCost,reservationId);
+        if(remaining[0] == -1)
+        {
+          resMessage = "User has only "+remaining[1]+" in account but itinerary costs "+totalCost+"\n";
+        }
+        else
+        {
+          resMessage = ("Paid reservation: "+reservationId+" remaining balance: "+remaining[1]+"\n");
+        }
+      }
+      commitTransaction();
+    }
+    catch(SQLException e)
+    {
+      e.printStackTrace();
+    }
+    finally {
+      if (reservs != null) {
+        try {
+          reservs.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      if (flights != null) {
+        try {
+          flights.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
     //return("Cannot find unpaid reservation " + reservationId + " under user: " + username + "\n");
-      return "Failed to pay for reservation " + reservationId + "\n";
+    if(!pass)
+    {
+      resMessage = "Failed to pay for reservation " + reservationId + "\n";
+    }
+    return resMessage;
   }
 
+  private double[] payReservation(double totalCost,int reservationId)
+  {
+    ResultSet money = null;
+    double[] vals = {-1,0};
+    double balance=0;
+    double newBalance =0;
+    double pass = -1;
+    try
+    {
+      beginTransaction();
+      getUserAcctStatement.clearParameters();
+      getUserAcctStatement.setString(1,username);
+      money = getUserAcctStatement.executeQuery();
+      money.next();
+      balance = money.getInt("balance");
+      if(balance>=totalCost)
+      {
+        newBalance = balance-totalCost;
+        updateUserAcctStatement.clearParameters();
+        updateUserAcctStatement.setDouble(1,newBalance);
+        updateUserAcctStatement.setString(2,username);
+        updateUserAcctStatement.executeUpdate();
+        updateReservationPaidStatement.clearParameters();
+        updateReservationPaidStatement.setBoolean(1,true);
+        updateReservationPaidStatement.setString(2,username);
+        updateReservationPaidStatement.setInt(3,reservationId);
+        updateReservationPaidStatement.executeUpdate();
+        pass = 1;
+      }
+      else
+      {
+        newBalance = balance;
+        pass=-1;
+      }
+      vals[0]=pass;
+      vals[1]=newBalance;
+      commitTransaction();
+    }
+    catch(SQLException e){e.printStackTrace();}
+    finally {
+      if (money != null) {
+        try {
+          money.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return vals;
+  }
+
+  private boolean refundReservation(double totalCost,int reservationId)
+  {
+    ResultSet money = null;
+    double[] vals = {-1,0};
+    double balance=0;
+    double newBalance =0;
+    boolean pass = false;
+    try
+    {
+      getUserAcctStatement.clearParameters();
+      getUserAcctStatement.setString(1,username);
+      money = getUserAcctStatement.executeQuery();
+      money.next();
+      balance = money.getInt("balance");
+      newBalance = balance+totalCost;
+      updateUserAcctStatement.clearParameters();
+      updateUserAcctStatement.setDouble(1,newBalance);
+      updateUserAcctStatement.setString(2,username);
+      updateUserAcctStatement.executeUpdate();
+      pass=true;
+    }
+    catch(SQLException e){e.printStackTrace();}
+    finally {
+      if (money != null) {
+        try {
+          money.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    return pass ;
+  }
   /* some utility functions below */
 
   public void beginTransaction() throws SQLException
