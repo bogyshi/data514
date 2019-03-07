@@ -110,3 +110,13 @@ ID: 285 Date: 2005-7-6 Carrier: AA Number: 14 Origin: Kahului HI Dest: Los Angel
 Booking failed
 Goodbye
 *
+create user3 user3 10000
+login user3 user3
+search "Kahului HI" "Los Angeles CA" 0 6 7
+book 5
+quit
+*
+who cares to be replaced output
+|
+other who cares output
+*

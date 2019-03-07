@@ -1,0 +1,5 @@
+USE hw6;
+SELECT y.name as cname, y.population, Count(u) as numReligions
+FROM world x, x.mondial.country y, CASE WHEN is_array(y.religion) THEN y.religion
+ELSE [y.religion] END u
+GROUP BY cname;

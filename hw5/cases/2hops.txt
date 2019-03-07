@@ -1,0 +1,8 @@
+search "Seattle WA" "Boston MA" 0 14 1
+*
+Itinerary 0: 2 flight(s), 334.0 minutes
+ID: 723225 Date: 2015-7-14 Carrier: AA Number: 1519 Origin: Seattle WA
+Dest: Chicago IL Duration: 213.0 Capacity: 17 Price: 374.1499938964844
+ID: 1080239 Date: 2015-7-14 Carrier: WN Number: 277 Origin: Chicago IL
+Dest: Boston MA Duration: 121.0 Capacity: 9 Price: 913.1500244140625
+*

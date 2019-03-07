@@ -1,0 +1,18 @@
+search "Seattle WA" "Boston MA" 1 14 1
+create slow joe 1000
+login slow joe
+book 0
+search "Seattle WA" "Boston MA" 1 14 1
+book 1
+book 0
+*
+Itinerary 0: 1 flight(s), 294.0 minutes
+ID: 730092 Date: 2015-7-14 Carrier: B6 Number: 1698 Origin: Seattle WA Dest: Boston MA Duration: 294.0 Capacity: 8 Price: 807.50
+Created user slow
+Logged in as slow
+No such itinerary 0
+Itinerary 0: 1 flight(s), 294.0 minutes
+ID: 730092 Date: 2015-7-14 Carrier: B6 Number: 1698 Origin: Seattle WA Dest: Boston MA Duration: 294.0 Capacity: 8 Price: 807.50
+Booking failed
+Booked flight(s), reservation ID: 1
+*

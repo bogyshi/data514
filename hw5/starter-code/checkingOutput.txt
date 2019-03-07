@@ -1,0 +1,22 @@
+compiling from  .
+added manifest
+adding: FlightService.class(in = 4889) (out= 2572)(deflated 47%)
+adding: Grader.class(in = 7800) (out= 3909)(deflated 49%)
+adding: Grader$User.class(in = 1721) (out= 893)(deflated 48%)
+adding: Query.class(in = 22627) (out= 11033)(deflated 51%)
+adding: Query$Flight.class(in = 1329) (out= 696)(deflated 47%)
+/home/bdvr/Documents/GitHub/sqlLiteExploration/hw5/starter-code
+JUnit version 4.12
+running cases from: ./cases/cancel_basic.txt
+
+running setup
+.running test: /home/bdvr/Documents/GitHub/sqlLiteExploration/hw5/starter-code/./cases/cancel_basic.txt
+0
+false
+This really shouldnt happen ever
+passed
+
+Time: 4.374
+
+OK (1 test)
+
