@@ -1,0 +1,58 @@
+use hw6;
+Select x.`-car_code`,x.name, x.`-area`
+from world w, w.mondial.country x
+let res = (
+Select [s.name] from sea s,split(s.`-country`, ' ') z where z = x.`-car_code`
+)
+where NOT EXISTS res
+group by x.`-car_code`,x.name,x.`-area`
+order by float(x.`-area`) desc;
+
+--not pretty, but it works!
+/*
+{ "-car_code": "KAZ", "name": "Kazakstan", "-area": "2717300" }
+{ "-car_code": "MNG", "name": "Mongolia", "-area": "1565000" }
+{ "-car_code": "TCH", "name": "Chad", "-area": "1284000" }
+{ "-car_code": "RN", "name": "Niger", "-area": "1267000" }
+{ "-car_code": "RMM", "name": "Mali", "-area": "1240000" }
+{ "-car_code": "ETH", "name": "Ethiopia", "-area": "1127127" }
+{ "-car_code": "BOL", "name": "Bolivia", "-area": "1098580" }
+{ "-car_code": "Z", "name": "Zambia", "-area": "752610" }
+{ "-car_code": "AFG", "name": "Afghanistan", "-area": "647500" }
+{ "-car_code": "RCA", "name": "Central African Republic", "-area": "622980" }
+{ "-car_code": "RB", "name": "Botswana", "-area": "600370" }
+{ "-car_code": "TM", "name": "Turkmenistan", "-area": "488100" }
+{ "-car_code": "UZB", "name": "Uzbekistan", "-area": "447400" }
+{ "-car_code": "PY", "name": "Paraguay", "-area": "406750" }
+{ "-car_code": "ZW", "name": "Zimbabwe", "-area": "390580" }
+{ "-car_code": "BF", "name": "Burkina Faso", "-area": "274200" }
+{ "-car_code": "LAO", "name": "Laos", "-area": "236800" }
+{ "-car_code": "EAU", "name": "Uganda", "-area": "236040" }
+{ "-car_code": "BY", "name": "Belarus", "-area": "207600" }
+{ "-car_code": "KGZ", "name": "Kyrgyzstan", "-area": "198500" }
+{ "-car_code": "TAD", "name": "Tajikistan", "-area": "143100" }
+{ "-car_code": "NEP", "name": "Nepal", "-area": "140800" }
+{ "-car_code": "MW", "name": "Malawi", "-area": "118480" }
+{ "-car_code": "H", "name": "Hungary", "-area": "93030" }
+{ "-car_code": "AZ", "name": "Azerbaijan", "-area": "86600" }
+{ "-car_code": "A", "name": "Austria", "-area": "83850" }
+{ "-car_code": "CZ", "name": "Czech Republic", "-area": "78703" }
+{ "-car_code": "SRB", "name": "Serbia", "-area": "77474" }
+{ "-car_code": "SK", "name": "Slovakia", "-area": "48845" }
+{ "-car_code": "BHT", "name": "Bhutan", "-area": "47000" }
+{ "-car_code": "CH", "name": "Switzerland", "-area": "41290" }
+{ "-car_code": "MD", "name": "Moldova", "-area": "33700" }
+{ "-car_code": "LS", "name": "Lesotho", "-area": "30350" }
+{ "-car_code": "ARM", "name": "Armenia", "-area": "29800" }
+{ "-car_code": "BI", "name": "Burundi", "-area": "27830" }
+{ "-car_code": "RWA", "name": "Rwanda", "-area": "26340" }
+{ "-car_code": "MK", "name": "Macedonia", "-area": "25333" }
+{ "-car_code": "SD", "name": "Swaziland", "-area": "17360" }
+{ "-car_code": "KOS", "name": "Kosovo", "-area": "10887" }
+{ "-car_code": "WEST", "name": "West Bank", "-area": "5860" }
+{ "-car_code": "L", "name": "Luxembourg", "-area": "2586" }
+{ "-car_code": "AND", "name": "Andorra", "-area": "450" }
+{ "-car_code": "FL", "name": "Liechtenstein", "-area": "160" }
+{ "-car_code": "RSM", "name": "San Marino", "-area": "60" }
+{ "-car_code": "V", "name": "Holy See", "-area": "0.44" }
+*/

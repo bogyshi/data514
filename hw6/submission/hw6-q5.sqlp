@@ -1,0 +1,283 @@
+use hw6;
+select y.name as mountain, h, z as code, x.name as country
+from world w,
+     w.mondial.country x,
+     w.mondial.mountain y, split(y.`-country`, ' ') z
+let h = int(y.height)
+where x.`-car_code` = z
+order by h desc;
+
+/*
+{ "h": 8848, "code": "TJ", "mountain": "Mount Everest", "country": "China" }
+{ "h": 8848, "code": "NEP", "mountain": "Mount Everest", "country": "Nepal" }
+{ "h": 8611, "code": "TJ", "mountain": "K2", "country": "China" }
+{ "h": 8611, "code": "PK", "mountain": "K2", "country": "Pakistan" }
+{ "h": 8586, "code": "IND", "mountain": "Kangchendzonga", "country": "India" }
+{ "h": 8586, "code": "NEP", "mountain": "Kangchendzonga", "country": "Nepal" }
+{ "h": 8516, "code": "TJ", "mountain": "Lhotse", "country": "China" }
+{ "h": 8516, "code": "NEP", "mountain": "Lhotse", "country": "Nepal" }
+{ "h": 8485, "code": "TJ", "mountain": "Makalu", "country": "China" }
+{ "h": 8485, "code": "NEP", "mountain": "Makalu", "country": "Nepal" }
+{ "h": 8188, "code": "TJ", "mountain": "Cho Oyu", "country": "China" }
+{ "h": 8188, "code": "NEP", "mountain": "Cho Oyu", "country": "Nepal" }
+{ "h": 8167, "code": "NEP", "mountain": "Dhaulagiri", "country": "Nepal" }
+{ "h": 8163, "code": "NEP", "mountain": "Manaslu", "country": "Nepal" }
+{ "h": 8125, "code": "PK", "mountain": "Nanga Parbat", "country": "Pakistan" }
+{ "h": 8091, "code": "NEP", "mountain": "Annapurna", "country": "Nepal" }
+{ "h": 8080, "code": "TJ", "mountain": "Gasherbrum I", "country": "China" }
+{ "h": 8080, "code": "PK", "mountain": "Gasherbrum I", "country": "Pakistan" }
+{ "h": 8051, "code": "TJ", "mountain": "Broad Peak", "country": "China" }
+{ "h": 8051, "code": "PK", "mountain": "Broad Peak", "country": "Pakistan" }
+{ "h": 8034, "code": "TJ", "mountain": "Gasherbrum II", "country": "China" }
+{ "h": 8034, "code": "PK", "mountain": "Gasherbrum II", "country": "Pakistan" }
+{ "h": 8027, "code": "TJ", "mountain": "Shishapangma", "country": "China" }
+{ "h": 7816, "code": "IND", "mountain": "Nanda Devi", "country": "India" }
+{ "h": 7690, "code": "AFG", "mountain": "Tirich Mir", "country": "Afghanistan" }
+{ "h": 7494, "code": "TAD", "mountain": "Pik Kommunizma", "country": "Tajikistan" }
+{ "h": 7439, "code": "TJ", "mountain": "Pik Pobeda", "country": "China" }
+{ "h": 7439, "code": "KGZ", "mountain": "Pik Pobeda", "country": "Kyrgyzstan" }
+{ "h": 7134, "code": "TAD", "mountain": "Pik Lenina", "country": "Tajikistan" }
+{ "h": 7134, "code": "KGZ", "mountain": "Pik Lenina", "country": "Kyrgyzstan" }
+{ "h": 6995, "code": "KGZ", "mountain": "Pik Chan-Tengri", "country": "Kyrgyzstan" }
+{ "h": 6974, "code": "TAD", "mountain": "Pik Revoluzija", "country": "Tajikistan" }
+{ "h": 6962, "code": "RA", "mountain": "Aconcagua", "country": "Argentina" }
+{ "h": 6893, "code": "RA", "mountain": "Ojos del Salado", "country": "Argentina" }
+{ "h": 6893, "code": "RCH", "mountain": "Ojos del Salado", "country": "Chile" }
+{ "h": 6795, "code": "RA", "mountain": "Monte Pissis", "country": "Argentina" }
+{ "h": 6785, "code": "TAD", "mountain": "Pik Moskva", "country": "Tajikistan" }
+{ "h": 6768, "code": "PE", "mountain": "Huascaran", "country": "Peru" }
+{ "h": 6739, "code": "RA", "mountain": "Llullaillaco", "country": "Argentina" }
+{ "h": 6739, "code": "RCH", "mountain": "Llullaillaco", "country": "Chile" }
+{ "h": 6726, "code": "TAD", "mountain": "Pik Karl-Marx", "country": "Tajikistan" }
+{ "h": 6714, "code": "TJ", "mountain": "Kailash", "country": "China" }
+{ "h": 6550, "code": "RA", "mountain": "Tupungato", "country": "Argentina" }
+{ "h": 6542, "code": "BOL", "mountain": "Sajama", "country": "Bolivia" }
+{ "h": 6439, "code": "BOL", "mountain": "Illimani", "country": "Bolivia" }
+{ "h": 6425, "code": "PE", "mountain": "Coropuna", "country": "Peru" }
+{ "h": 6368, "code": "BOL", "mountain": "Illampu", "country": "Bolivia" }
+{ "h": 6336, "code": "PE", "mountain": "Ausangate", "country": "Peru" }
+{ "h": 6288, "code": "PE", "mountain": "Ampato", "country": "Peru" }
+{ "h": 6287, "code": "EC", "mountain": "Chimborazo", "country": "Ecuador" }
+{ "h": 6193, "code": "USA", "mountain": "Mt McKinley", "country": "United States" }
+{ "h": 5959, "code": "CDN", "mountain": "Mt Logan", "country": "Canada" }
+{ "h": 5947, "code": "PE", "mountain": "Alpamayo", "country": "Peru" }
+{ "h": 5920, "code": "BOL", "mountain": "Licancabur", "country": "Bolivia" }
+{ "h": 5920, "code": "RCH", "mountain": "Licancabur", "country": "Chile" }
+{ "h": 5897, "code": "EC", "mountain": "Cotopaxi", "country": "Ecuador" }
+{ "h": 5895, "code": "EAT", "mountain": "Kilimanjaro", "country": "Tanzania" }
+{ "h": 5796, "code": "EC", "mountain": "Cayambe", "country": "Ecuador" }
+{ "h": 5775, "code": "CO", "mountain": "Pico Cristobal Colon", "country": "Colombia" }
+{ "h": 5750, "code": "CO", "mountain": "Nevado del Huila", "country": "Colombia" }
+{ "h": 5700, "code": "MEX", "mountain": "Citlaltepetl (Pico de Orizaba)", "country": "Mexico" }
+{ "h": 5642, "code": "R", "mountain": "Elbrus", "country": "Russia" }
+{ "h": 5610, "code": "IR", "mountain": "Damavand", "country": "Iran" }
+{ "h": 5489, "code": "CDN", "mountain": "Mt St.Elias", "country": "Canada" }
+{ "h": 5489, "code": "USA", "mountain": "Mt St.Elias", "country": "United States" }
+{ "h": 5450, "code": "MEX", "mountain": "Popocatepetl", "country": "Mexico" }
+{ "h": 5389, "code": "CO", "mountain": "Nevado del Ruiz", "country": "Colombia" }
+{ "h": 5286, "code": "MEX", "mountain": "Iztaccihuatl", "country": "Mexico" }
+{ "h": 5199, "code": "EAK", "mountain": "Kenia", "country": "Kenya" }
+{ "h": 5187, "code": "PE", "mountain": "Pico Rocarre", "country": "Peru" }
+{ "h": 5165, "code": "TR", "mountain": "Ararat", "country": "Turkey" }
+{ "h": 5148, "code": "EAT", "mountain": "Mawenzi", "country": "Tanzania" }
+{ "h": 5109, "code": "ZRE", "mountain": "Ruwenzori", "country": "Zaire" }
+{ "h": 5109, "code": "EAU", "mountain": "Ruwenzori", "country": "Uganda" }
+{ "h": 5033, "code": "R", "mountain": "Kasbek", "country": "Russia" }
+{ "h": 5033, "code": "GE", "mountain": "Kasbek", "country": "Georgia" }
+{ "h": 5005, "code": "CDN", "mountain": "Mt Bona", "country": "Canada" }
+{ "h": 5005, "code": "USA", "mountain": "Mt Bona", "country": "United States" }
+{ "h": 4996, "code": "USA", "mountain": "Mt Blackburn", "country": "United States" }
+{ "h": 4981, "code": "YV", "mountain": "Pico Bolivar", "country": "Venezuela" }
+{ "h": 4884, "code": "RI", "mountain": "Puncak Jaya", "country": "Indonesia" }
+{ "h": 4811, "code": "IR", "mountain": "Sabalan", "country": "Iran" }
+{ "h": 4808, "code": "F", "mountain": "Mont Blanc", "country": "France" }
+{ "h": 4808, "code": "I", "mountain": "Mont Blanc", "country": "Italy" }
+{ "h": 4750, "code": "R", "mountain": "Kljutschewskaja Sopka", "country": "Russia" }
+{ "h": 4663, "code": "CDN", "mountain": "Mt Fairweather", "country": "Canada" }
+{ "h": 4663, "code": "USA", "mountain": "Mt Fairweather", "country": "United States" }
+{ "h": 4634, "code": "I", "mountain": "Monte Rosa", "country": "Italy" }
+{ "h": 4634, "code": "CH", "mountain": "Monte Rosa", "country": "Switzerland" }
+{ "h": 4567, "code": "EAT", "mountain": "Meru", "country": "Tanzania" }
+{ "h": 4558, "code": "MEX", "mountain": "Nevado de Toluca", "country": "Mexico" }
+{ "h": 4550, "code": "IR", "mountain": "Zard Kuh", "country": "Iran" }
+{ "h": 4533, "code": "ETH", "mountain": "Ras Daschan Terara", "country": "Ethiopia" }
+{ "h": 4509, "code": "PNG", "mountain": "Mt. Wilhelm", "country": "Papua New Guinea" }
+{ "h": 4507, "code": "ZRE", "mountain": "Karisimbi", "country": "Zaire" }
+{ "h": 4507, "code": "RWA", "mountain": "Karisimbi", "country": "Rwanda" }
+{ "h": 4506, "code": "R", "mountain": "Bjelucha", "country": "Russia" }
+{ "h": 4506, "code": "KAZ", "mountain": "Bjelucha", "country": "Kazakstan" }
+{ "h": 4478, "code": "I", "mountain": "Matterhorn", "country": "Italy" }
+{ "h": 4478, "code": "CH", "mountain": "Matterhorn", "country": "Switzerland" }
+{ "h": 4418, "code": "USA", "mountain": "Mt Whitney", "country": "United States" }
+{ "h": 4401, "code": "USA", "mountain": "Mt Elbert", "country": "United States" }
+{ "h": 4392, "code": "USA", "mountain": "Mt Rainier", "country": "United States" }
+{ "h": 4368, "code": "PNG", "mountain": "Mt. Giluwe", "country": "Papua New Guinea" }
+{ "h": 4330, "code": "MEX", "mountain": "Nevado de Colima", "country": "Mexico" }
+{ "h": 4321, "code": "EAK", "mountain": "Elgon", "country": "Kenya" }
+{ "h": 4321, "code": "EAU", "mountain": "Elgon", "country": "Uganda" }
+{ "h": 4314, "code": "CH", "mountain": "GrandCombin", "country": "Switzerland" }
+{ "h": 4302, "code": "USA", "mountain": "Pikes Peak", "country": "United States" }
+{ "h": 4274, "code": "CH", "mountain": "Finsteraarhorn", "country": "Switzerland" }
+{ "h": 4220, "code": "GCA", "mountain": "Tajumulco", "country": "Guatemala" }
+{ "h": 4214, "code": "USA", "mountain": "Mauna Kea", "country": "United States" }
+{ "h": 4207, "code": "USA", "mountain": "Gannett Peak", "country": "United States" }
+{ "h": 4170, "code": "USA", "mountain": "Mauna Loa", "country": "United States" }
+{ "h": 4165, "code": "MA", "mountain": "Tubkhal", "country": "Morocco" }
+{ "h": 4123, "code": "USA", "mountain": "Kings Peak", "country": "United States" }
+{ "h": 4101, "code": "F", "mountain": "Barre des Ecrins", "country": "France" }
+{ "h": 4101, "code": "MAL", "mountain": "Kinabalu", "country": "Malaysia" }
+{ "h": 4095, "code": "CAM", "mountain": "Fako", "country": "Cameroon" }
+{ "h": 4061, "code": "I", "mountain": "GranParadiso", "country": "Italy" }
+{ "h": 4048, "code": "I", "mountain": "Piz Bernina", "country": "Italy" }
+{ "h": 4048, "code": "CH", "mountain": "Piz Bernina", "country": "Switzerland" }
+{ "h": 4019, "code": "CDN", "mountain": "Mt Waddington", "country": "Canada" }
+{ "h": 4011, "code": "USA", "mountain": "Wheeler Peak", "country": "United States" }
+{ "h": 4006, "code": "USA", "mountain": "Boundary Peak", "country": "United States" }
+{ "h": 3954, "code": "CDN", "mountain": "Mt Robson", "country": "Canada" }
+{ "h": 3950, "code": "RC", "mountain": "Yu Shan", "country": "Taiwan" }
+{ "h": 3901, "code": "USA", "mountain": "Granite Peak", "country": "United States" }
+{ "h": 3859, "code": "USA", "mountain": "Borah Peak", "country": "United States" }
+{ "h": 3850, "code": "USA", "mountain": "Humphreys Peak", "country": "United States" }
+{ "h": 3819, "code": "CR", "mountain": "Cerro Chirripo", "country": "Costa Rica" }
+{ "h": 3805, "code": "RI", "mountain": "Kerinci", "country": "Indonesia" }
+{ "h": 3797, "code": "A", "mountain": "Grossglockner", "country": "Austria" }
+{ "h": 3776, "code": "J", "mountain": "Fujisan", "country": "Japan" }
+{ "h": 3760, "code": "YE", "mountain": "Jabal Shuayb", "country": "Yemen" }
+{ "h": 3756, "code": "TR", "mountain": "Demirkazik", "country": "Turkey" }
+{ "h": 3754, "code": "NZ", "mountain": "Mt. Cook", "country": "New Zealand" }
+{ "h": 3747, "code": "CDN", "mountain": "Mt Columbia", "country": "Canada" }
+{ "h": 3743, "code": "USA", "mountain": "Mt Adams", "country": "United States" }
+{ "h": 3726, "code": "RI", "mountain": "Rinjani", "country": "Indonesia" }
+{ "h": 3718, "code": "E", "mountain": "Pico de Teide", "country": "Spain" }
+{ "h": 3676, "code": "RI", "mountain": "Semeru", "country": "Indonesia" }
+{ "h": 3482, "code": "E", "mountain": "Mulhacen", "country": "Spain" }
+{ "h": 3482, "code": "LS", "mountain": "Thabana Ntlenyana", "country": "Lesotho" }
+{ "h": 3466, "code": "RI", "mountain": "Leuser", "country": "Indonesia" }
+{ "h": 3455, "code": "RI", "mountain": "Rantekombola", "country": "Indonesia" }
+{ "h": 3432, "code": "CR", "mountain": "Irazu", "country": "Costa Rica" }
+{ "h": 3424, "code": "USA", "mountain": "Mt Hood", "country": "United States" }
+{ "h": 3415, "code": "TCH", "mountain": "Emi Kussi", "country": "Chad" }
+{ "h": 3404, "code": "E", "mountain": "Pico de Aneto", "country": "Spain" }
+{ "h": 3343, "code": "I", "mountain": "Marmolata", "country": "Italy" }
+{ "h": 3323, "code": "I", "mountain": "Etna", "country": "Italy" }
+{ "h": 3298, "code": "F", "mountain": "Vignemale", "country": "France" }
+{ "h": 3298, "code": "E", "mountain": "Vignemale", "country": "Spain" }
+{ "h": 3190, "code": "J", "mountain": "Hotaka-Dake", "country": "Japan" }
+{ "h": 3181, "code": "RSA", "mountain": "Cathkin Peak", "country": "South Africa" }
+{ "h": 3142, "code": "RI", "mountain": "Gunung Agung", "country": "Indonesia" }
+{ "h": 3108, "code": "USA", "mountain": "Mt Redoubt", "country": "United States" }
+{ "h": 3098, "code": "DOM", "mountain": "Pico Duarte", "country": "Dominican Republic" }
+{ "h": 3088, "code": "RL", "mountain": "Jabal Lubnan", "country": "Lebanon" }
+{ "h": 3088, "code": "SUD", "mountain": "Jabal Marra", "country": "Sudan" }
+{ "h": 3069, "code": "REUN", "mountain": "Piton des Neiges", "country": "Reunion" }
+{ "h": 3055, "code": "USA", "mountain": "Haleakala", "country": "United States" }
+{ "h": 3027, "code": "RI", "mountain": "Gunung Binaiya", "country": "Indonesia" }
+{ "h": 3011, "code": "GQ", "mountain": "Pico Basile", "country": "Equatorial Guinea" }
+{ "h": 3003, "code": "DZ", "mountain": "Tahat", "country": "Algeria" }
+{ "h": 2963, "code": "A", "mountain": "Zugspitze", "country": "Austria" }
+{ "h": 2963, "code": "D", "mountain": "Zugspitze", "country": "Germany" }
+{ "h": 2963, "code": "TL", "mountain": "Tatamailau", "country": "Timor-Leste" }
+{ "h": 2954, "code": "RP", "mountain": "Mount Apo", "country": "Philippines" }
+{ "h": 2928, "code": "RP", "mountain": "Pulog", "country": "Philippines" }
+{ "h": 2925, "code": "BG", "mountain": "Musala", "country": "Bulgaria" }
+{ "h": 2917, "code": "GR", "mountain": "Olymp", "country": "Greece" }
+{ "h": 2914, "code": "RI", "mountain": "Merapi", "country": "Indonesia" }
+{ "h": 2912, "code": "I", "mountain": "Gran Sasso", "country": "Italy" }
+{ "h": 2876, "code": "RM", "mountain": "Tsaratanana", "country": "Madagascar" }
+{ "h": 2862, "code": "A", "mountain": "Hochgolling", "country": "Austria" }
+{ "h": 2850, "code": "RI", "mountain": "Tambora", "country": "Indonesia" }
+{ "h": 2829, "code": "CV", "mountain": "Fogo", "country": "Cape Verde" }
+{ "h": 2797, "code": "NZ", "mountain": "Ruapehu", "country": "New Zealand" }
+{ "h": 2791, "code": "BR", "mountain": "Pico de Agulhas Negras", "country": "Brazil" }
+{ "h": 2751, "code": "AL", "mountain": "Korab", "country": "Albania" }
+{ "h": 2751, "code": "MK", "mountain": "Korab", "country": "Macedonia" }
+{ "h": 2744, "code": "TJ", "mountain": "Changbai Shan", "country": "China" }
+{ "h": 2744, "code": "NOK", "mountain": "Changbai Shan", "country": "North Korea" }
+{ "h": 2715, "code": "PNG", "mountain": "Mt. Balbi", "country": "Papua New Guinea" }
+{ "h": 2706, "code": "F", "mountain": "Monte Cinto", "country": "France" }
+{ "h": 2694, "code": "AL", "mountain": "Jezerce", "country": "Albania" }
+{ "h": 2667, "code": "USA", "mountain": "Guadalupe Peak", "country": "United States" }
+{ "h": 2658, "code": "RM", "mountain": "Andringitra", "country": "Madagascar" }
+{ "h": 2655, "code": "SK", "mountain": "GerlachovskyStit", "country": "Slovakia" }
+{ "h": 2648, "code": "E", "mountain": "Torre de Cerredo", "country": "Spain" }
+{ "h": 2648, "code": "E", "mountain": "Pico de Almanzor", "country": "Spain" }
+{ "h": 2642, "code": "RM", "mountain": "Tsiafajavona", "country": "Madagascar" }
+{ "h": 2637, "code": "ET", "mountain": "Jabal Katrina", "country": "Egypt" }
+{ "h": 2636, "code": "IND", "mountain": "Dodabetta", "country": "India" }
+{ "h": 2631, "code": "REUN", "mountain": "Piton de la Fournaise", "country": "Reunion" }
+{ "h": 2616, "code": "CDN", "mountain": "Barbeau Peak", "country": "Canada" }
+{ "h": 2544, "code": "RO", "mountain": "Moldoveanu", "country": "Romania" }
+{ "h": 2524, "code": "CL", "mountain": "Pidurutalagala", "country": "Sri Lanka" }
+{ "h": 2469, "code": "N", "mountain": "Galdhoeppig", "country": "Norway" }
+{ "h": 2456, "code": "GR", "mountain": "Psiloritis", "country": "Greece" }
+{ "h": 2456, "code": "MA", "mountain": "Djebel Aures", "country": "Morocco" }
+{ "h": 2452, "code": "N", "mountain": "Glittertind", "country": "Norway" }
+{ "h": 2435, "code": "RP", "mountain": "Kanlaon", "country": "Philippines" }
+{ "h": 2426, "code": "E", "mountain": "Roque de los Muchachos", "country": "Spain" }
+{ "h": 2351, "code": "P", "mountain": "Pico", "country": "Portugal" }
+{ "h": 2335, "code": "SLB", "mountain": "Popomanaseu", "country": "Solomon Islands" }
+{ "h": 2313, "code": "E", "mountain": "Moncayo", "country": "Spain" }
+{ "h": 2290, "code": "J", "mountain": "Asahi-Dake", "country": "Japan" }
+{ "h": 2286, "code": "N", "mountain": "Snoehetta", "country": "Norway" }
+{ "h": 2256, "code": "JA", "mountain": "Blue Mountain Peak", "country": "Jamaica" }
+{ "h": 2241, "code": "FPOL", "mountain": "Mont Orohena", "country": "French Polynesia" }
+{ "h": 2228, "code": "CH", "mountain": "Crap_Sogn_Gion", "country": "Switzerland" }
+{ "h": 2228, "code": "AUS", "mountain": "Mt. Kosciuszko", "country": "Australia" }
+{ "h": 2207, "code": "USA", "mountain": "Harney Peak", "country": "United States" }
+{ "h": 2190, "code": "MAL", "mountain": "Tahan", "country": "Malaysia" }
+{ "h": 2147, "code": "CDN", "mountain": "Mt. Odin", "country": "Canada" }
+{ "h": 2114, "code": "S", "mountain": "Kebnekaise", "country": "Sweden" }
+{ "h": 2110, "code": "IS", "mountain": "Hvannadalshnukur", "country": "Iceland" }
+{ "h": 2090, "code": "S", "mountain": "Sarektjokko", "country": "Sweden" }
+{ "h": 2085, "code": "RP", "mountain": "Mantalingajan", "country": "Philippines" }
+{ "h": 2083, "code": "N", "mountain": "Jostedalsbre", "country": "Norway" }
+{ "h": 2060, "code": "HELX", "mountain": "Queen Marys Peak", "country": "Saint Helena" }
+{ "h": 2037, "code": "USA", "mountain": "Mt Mitchell", "country": "United States" }
+{ "h": 2025, "code": "USA", "mountain": "Clingmans Dome", "country": "United States" }
+{ "h": 2024, "code": "STP", "mountain": "Pico de Sao Tome", "country": "Sao Tome and Principe" }
+{ "h": 2021, "code": "S", "mountain": "Portefjaellen", "country": "Sweden" }
+{ "h": 1993, "code": "P", "mountain": "Torre de Estrela", "country": "Portugal" }
+{ "h": 1986, "code": "AUS", "mountain": "Mt. Bogong", "country": "Australia" }
+{ "h": 1974, "code": "C", "mountain": "Pico Turquino", "country": "Cuba" }
+{ "h": 1952, "code": "CY", "mountain": "Olympos", "country": "Cyprus" }
+{ "h": 1949, "code": "E", "mountain": "Pico de los Nieves", "country": "Spain" }
+{ "h": 1944, "code": "RN", "mountain": "Mont Greboun", "country": "Niger" }
+{ "h": 1917, "code": "USA", "mountain": "Mt Washington", "country": "United States" }
+{ "h": 1914, "code": "N", "mountain": "Sulitjelma", "country": "Norway" }
+{ "h": 1914, "code": "S", "mountain": "Sulitjelma", "country": "Sweden" }
+{ "h": 1895, "code": "R", "mountain": "Narodnaja", "country": "Russia" }
+{ "h": 1885, "code": "F", "mountain": "Puy de Sancy", "country": "France" }
+{ "h": 1876, "code": "N", "mountain": "Joekul", "country": "Norway" }
+{ "h": 1861, "code": "P", "mountain": "Pico Ruivo", "country": "Portugal" }
+{ "h": 1858, "code": "WS", "mountain": "Silisili", "country": "Samoa" }
+{ "h": 1850, "code": "S", "mountain": "Tarrekaise", "country": "Sweden" }
+{ "h": 1833, "code": "IS", "mountain": "Snaefell", "country": "Iceland" }
+{ "h": 1800, "code": "RN", "mountain": "Tamgak", "country": "Niger" }
+{ "h": 1700, "code": "NIC", "mountain": "Concepcion", "country": "Nicaragua" }
+{ "h": 1654, "code": "I", "mountain": "Monte Falterona", "country": "Italy" }
+{ "h": 1629, "code": "USA", "mountain": "Mt Marcy", "country": "United States" }
+{ "h": 1602, "code": "CZ", "mountain": "Schneekoppe", "country": "Czech Republic" }
+{ "h": 1602, "code": "PL", "mountain": "Schneekoppe", "country": "Poland" }
+{ "h": 1493, "code": "D", "mountain": "Feldberg", "country": "Germany" }
+{ "h": 1491, "code": "IS", "mountain": "Hekla", "country": "Iceland" }
+{ "h": 1486, "code": "RP", "mountain": "Pinatubo", "country": "Philippines" }
+{ "h": 1467, "code": "GUAD", "mountain": "La Soufriere", "country": "Guadeloupe" }
+{ "h": 1465, "code": "F", "mountain": "Puy De Dome", "country": "France" }
+{ "h": 1456, "code": "D", "mountain": "Grosser Arber", "country": "Germany" }
+{ "h": 1450, "code": "IS", "mountain": "Katla", "country": "Iceland" }
+{ "h": 1447, "code": "WD", "mountain": "Morne Diablotins", "country": "Dominica" }
+{ "h": 1424, "code": "F", "mountain": "Grand Ballon", "country": "France" }
+{ "h": 1397, "code": "MART", "mountain": "Pelee", "country": "Martinique" }
+{ "h": 1344, "code": "GB", "mountain": "Ben Nevis", "country": "United Kingdom" }
+{ "h": 1338, "code": "PR", "mountain": "Cerro de Punta", "country": "Puerto Rico" }
+{ "h": 1328, "code": "SF", "mountain": "Haltiatunturi", "country": "Finland" }
+{ "h": 1323, "code": "FJI", "mountain": "Mt.Victoria", "country": "Fiji" }
+{ "h": 1281, "code": "I", "mountain": "Vesuv", "country": "Italy" }
+{ "h": 1276, "code": "R", "mountain": "Zhima", "country": "Russia" }
+{ "h": 1220, "code": "WV", "mountain": "Soufriere", "country": "Saint Vincent and the Grenadines" }
+{ "h": 1141, "code": "D", "mountain": "Brocken", "country": "Germany" }
+{ "h": 1050, "code": "MNTS", "mountain": "Soufriere Hills", "country": "Montserrat" }
+{ "h": 952, "code": "CDN", "mountain": "Mt. Babel", "country": "Canada" }
+{ "h": 869, "code": "AUS", "mountain": "Uluru", "country": "Australia" }
+{ "h": 813, "code": "RI", "mountain": "Krakatau", "country": "Indonesia" }
+*/

@@ -1,0 +1,272 @@
+USE hw6;
+select w.`#text`, sum(float(w.`-percentage`) * float(a)/100) as total, count(z) as numPlaces
+from world x, x.mondial.country y,
+CASE WHEN is_array(y.ethnicgroups) OR y.ethnicgroups IS MISSING THEN y.ethnicgroups else [y.ethnicgroups] END w,
+CASE WHEN is_array(y.name) THEN y.name else [y.name] END z,
+CASE WHEN is_array(y.population) THEN y.population else [y.population] END a
+group by w.`#text`;
+
+/*
+{ "$1": 2.57365664E8, "$2": 3, "#text": "Afar" }
+{ "$1": 381850.0, "$2": 1, "#text": "African descent" }
+{ "$1": 1.94090576E8, "$2": 1, "#text": "Afro-Asian" }
+{ "$1": 3114330.0, "$2": 1, "#text": "Afro-Chinese" }
+{ "$1": 5.17143328E8, "$2": 4, "#text": "Albanian" }
+{ "$1": 2.92452608E9, "$2": 6, "#text": "Amerindian" }
+{ "$1": 4.96215008E8, "$2": 1, "#text": "Amerindian Amerindian" }
+{ "$1": 2182980.0, "$2": 1, "#text": "Andorran" }
+{ "$1": 7.0318752E7, "$2": 1, "#text": "Arab Iranian" }
+{ "$1": 6.7241636E9, "$2": 3, "#text": "Arab-Berber" }
+{ "$1": 4.03951072E8, "$2": 6, "#text": "Armenian" }
+{ "$1": 1.31416794E9, "$2": 8, "#text": "Asian" }
+{ "$1": 1.07111456E8, "$2": 1, "#text": "Assyrian" }
+{ "$1": 7.3106938E8, "$2": 3, "#text": "Azeri" }
+{ "$1": 1.0079088E8, "$2": 1, "#text": "Bagisu" }
+{ "$1": 1.32188528E8, "$2": 1, "#text": "Baloch" }
+{ "$1": 3.39536224E8, "$2": 1, "#text": "Baoule" }
+{ "$1": 1.33360632E8, "$2": 1, "#text": "Bashkir" }
+{ "$1": 1.61265408E8, "$2": 1, "#text": "Basogo" }
+{ "$1": 680900.0, "$2": 1, "#text": "Basques Bretons" }
+{ "$1": 6.0474528E7, "$2": 1, "#text": "Batobo" }
+{ "$1": 1.40374848E8, "$2": 1, "#text": "Batswana" }
+{ "$1": 3.9185908E7, "$2": 1, "#text": "Beri Beri" }
+{ "$1": 2.65724016E8, "$2": 1, "#text": "Bete" }
+{ "$1": 9.1131248E7, "$2": 1, "#text": "Bhote" }
+{ "$1": 9.344192E7, "$2": 1, "#text": "Black Maur" }
+{ "$1": 6.0474528E7, "$2": 1, "#text": "Bunyoro" }
+{ "$1": 4.42108256E8, "$2": 1, "#text": "Cameroon Highlanders" }
+{ "$1": 8292600.0, "$2": 1, "#text": "Carib Indians" }
+{ "$1": 2.70292E7, "$2": 1, "#text": "Celt" }
+{ "$1": 6619752.5, "$2": 1, "#text": "Chamorro" }
+{ "$1": 4212152.0, "$2": 1, "#text": "Circassian" }
+{ "$1": 3.5899376E8, "$2": 1, "#text": "Colored" }
+{ "$1": 8.2778432E7, "$2": 4, "#text": "Creole" }
+{ "$1": 814842.0, "$2": 1, "#text": "Danish" }
+{ "$1": 8.1834744E7, "$2": 1, "#text": "Diola" }
+{ "$1": 2.38026936E10, "$2": 1, "#text": "Dravidian" }
+{ "$1": 8.77172E7, "$2": 3, "#text": "East Indian" }
+{ "$1": 2.70969568E8, "$2": 1, "#text": "Equatorial Bantu" }
+{ "$1": 8.9754824E7, "$2": 1, "#text": "Estonian" }
+{ "$1": 1424182.0, "$2": 1, "#text": "European Chinese" }
+{ "$1": 9092749.0, "$2": 1, "#text": "European Lebanese" }
+{ "$1": 1.4934972E7, "$2": 3, "#text": "Europeans" }
+{ "$1": 1605370.9, "$2": 1, "#text": "Finn" }
+{ "$1": 5.5936326E8, "$2": 1, "#text": "Fleming" }
+{ "$1": 2280512.0, "$2": 1, "#text": "Franco-Mauritian" }
+{ "$1": 7.8366586E8, "$2": 5, "#text": "French" }
+{ "$1": 1535072.0, "$2": 1, "#text": "Garifuna" }
+{ "$1": 3.65908672E8, "$2": 1, "#text": "Georgian" }
+{ "$1": 5.28754112E8, "$2": 1, "#text": "Gilaki Mazandarani" }
+{ "$1": 1.06619667E9, "$2": 2, "#text": "Greek" }
+{ "$1": 9747408.0, "$2": 1, "#text": "Greeks" }
+{ "$1": 6312105.0, "$2": 1, "#text": "Gypsy" }
+{ "$1": 1.11199461E11, "$2": 1, "#text": "Han Chinese" }
+{ "$1": 5.10328064E8, "$2": 1, "#text": "Hausa" }
+{ "$1": 4.30618592E8, "$2": 1, "#text": "Hazara" }
+{ "$1": 1.18282854E9, "$2": 6, "#text": "Hungarian" }
+{ "$1": 5.4826874E8, "$2": 1, "#text": "Hutu" }
+{ "$1": 6.8551754E10, "$2": 1, "#text": "Indo-Aryan" }
+{ "$1": 4.3231008E7, "$2": 1, "#text": "Inuit" }
+{ "$1": 1.7998134E7, "$2": 3, "#text": "Iranian" }
+{ "$1": 1.61265408E8, "$2": 1, "#text": "Iteso" }
+{ "$1": 4.9178596E7, "$2": 1, "#text": "Karakalpak" }
+{ "$1": 9.7750963E8, "$2": 1, "#text": "Khmer" }
+{ "$1": 2.5857248E8, "$2": 1, "#text": "Kimbundu" }
+{ "$1": 1.5687712E8, "$2": 1, "#text": "Kirdi" }
+{ "$1": 4.6265984E8, "$2": 1, "#text": "Kurd" }
+{ "$1": 1.571024E9, "$2": 2, "#text": "Kurdish" }
+{ "$1": 3.38352512E8, "$2": 1, "#text": "Lao Loum" }
+{ "$1": 4.4781948E7, "$2": 1, "#text": "Lao Soung Hmong Yao" }
+{ "$1": 8.0632704E7, "$2": 1, "#text": "Lugbara" }
+{ "$1": 3.66296928E8, "$2": 1, "#text": "Luo" }
+{ "$1": 1.3097704E7, "$2": 1, "#text": "MBaka" }
+{ "$1": 1.5829416E8, "$2": 2, "#text": "Macedonian" }
+{ "$1": 9.910143E9, "$2": 6, "#text": "Malay" }
+{ "$1": 3.84746304E8, "$2": 2, "#text": "Malinke" }
+{ "$1": 4.8266304E8, "$2": 1, "#text": "Mande" }
+{ "$1": 8.1834744E7, "$2": 1, "#text": "Mandingo" }
+{ "$1": 3.1577048E7, "$2": 1, "#text": "Maori" }
+{ "$1": 7.008144E7, "$2": 1, "#text": "Maur" }
+{ "$1": 2412256.0, "$2": 1, "#text": "Maya" }
+{ "$1": 1.3097704E7, "$2": 1, "#text": "Mboum" }
+{ "$1": 3.91811123E9, "$2": 1, "#text": "Mediterranean Nordic" }
+{ "$1": 6.5115192E7, "$2": 3, "#text": "Melanesian" }
+{ "$1": 6.3154637E8, "$2": 1, "#text": "Mestizo - Amerindian-Spanish" }
+{ "$1": 1.4547553E7, "$2": 3, "#text": "Micronesian" }
+{ "$1": 1.9299164E7, "$2": 1, "#text": "Mixed Black" }
+{ "$1": 1.03724936E8, "$2": 1, "#text": "Moldavian" }
+{ "$1": 2.87918144E8, "$2": 1, "#text": "Moldavian/Romanian" }
+{ "$1": 3.5545144E7, "$2": 2, "#text": "Montenegrin" }
+{ "$1": 1.07392264E8, "$2": 3, "#text": "Muslim" }
+{ "$1": 595834.0, "$2": 1, "#text": "Nauruan" }
+{ "$1": 1.50768E7, "$2": 2, "#text": "Norman-French" }
+{ "$1": 117226.41, "$2": 1, "#text": "Norwegian" }
+{ "$1": 3.82687264E8, "$2": 1, "#text": "Ovimbundu" }
+{ "$1": 1.377468E7, "$2": 3, "#text": "Pacific Islander" }
+{ "$1": 9859698.0, "$2": 1, "#text": "Pakistani" }
+{ "$1": 3.88811725E9, "$2": 7, "#text": "Polish" }
+{ "$1": 2.14957712E8, "$2": 1, "#text": "Quechua" }
+{ "$1": 1.93665485E9, "$2": 2, "#text": "Romanian" }
+{ "$1": 1.45948631E10, "$2": 17, "#text": "Russian" }
+{ "$1": 93738.8, "$2": 1, "#text": "Russian Ukrainian" }
+{ "$1": 1612308.6, "$2": 1, "#text": "Ruthenian" }
+{ "$1": 1.20949056E8, "$2": 1, "#text": "Rwanda" }
+{ "$1": 1.0283649E7, "$2": 1, "#text": "Saho" }
+{ "$1": 2.569285E7, "$2": 2, "#text": "Samoan" }
+{ "$1": 4385700.0, "$2": 1, "#text": "Scandinavian" }
+{ "$1": 2.21436672E8, "$2": 1, "#text": "Senoufou" }
+{ "$1": 8.4030579E8, "$2": 8, "#text": "Serb" }
+{ "$1": 5.1454496E8, "$2": 1, "#text": "Sidamo" }
+{ "$1": 1.37292749E9, "$2": 1, "#text": "Sinhalese" }
+{ "$1": 4.99548224E8, "$2": 3, "#text": "Slovak" }
+{ "$1": 1.18801626E9, "$2": 3, "#text": "Somali" }
+{ "$1": 1.96486864E8, "$2": 1, "#text": "Sotho" }
+{ "$1": 1.7041728E8, "$2": 2, "#text": "South Asian" }
+{ "$1": 1.80313395E9, "$2": 1, "#text": "Taiwanese" }
+{ "$1": 3.33955328E8, "$2": 1, "#text": "Tamil" }
+{ "$1": 6.5311526E8, "$2": 3, "#text": "Tatar" }
+{ "$1": 4.4138516E9, "$2": 1, "#text": "Thai" }
+{ "$1": 1.37115328E8, "$2": 1, "#text": "Tigre Kunama" }
+{ "$1": 1.71394144E8, "$2": 1, "#text": "Tigrinya" }
+{ "$1": 262512.0, "$2": 1, "#text": "Tongan" }
+{ "$1": 8.1834744E7, "$2": 1, "#text": "Toucouleur" }
+{ "$1": 7.3208432E7, "$2": 1, "#text": "Turk" }
+{ "$1": 6853359.0, "$2": 1, "#text": "Twa" }
+{ "$1": 3.35617952E8, "$2": 1, "#text": "Walloon" }
+{ "$1": 1.11130952E8, "$2": 1, "#text": "Welsh" }
+{ "$1": 3.22185504E8, "$2": 6, "#text": "White" }
+{ "$1": 3.27338976E8, "$2": 1, "#text": "Wolof" }
+{ "$1": 1.1043948E8, "$2": 1, "#text": "black-Indian" }
+{ "$1": 1.06811448E8, "$2": 1, "#text": "foreign-born first-generation" }
+{ "$1": 9395658.0, "$2": 1, "#text": "Abkhaz" }
+{ "$1": 8.0632704E7, "$2": 1, "#text": "Acholi" }
+{ "$1": 2.36886426E10, "$2": 20, "#text": "African" }
+{ "$1": 3.5923592E7, "$2": 1, "#text": "African-white-Indian" }
+{ "$1": 7785825.0, "$2": 1, "#text": "Afro-East Indian" }
+{ "$1": 3.9188652E7, "$2": 1, "#text": "Afro-European" }
+{ "$1": 2956590.0, "$2": 1, "#text": "Alemannic" }
+{ "$1": 1.0548945E7, "$2": 1, "#text": "Americo-Liberians" }
+{ "$1": 2.752073E7, "$2": 1, "#text": "Amerindians" }
+{ "$1": 1.82949325E9, "$2": 1, "#text": "Amhara Tigrean" }
+{ "$1": 7.2373949E9, "$2": 13, "#text": "Arab" }
+{ "$1": 1.79131424E8, "$2": 1, "#text": "Aymara" }
+{ "$1": 1.58626227E9, "$2": 1, "#text": "Azerbaijani" }
+{ "$1": 3.42688992E8, "$2": 1, "#text": "Baganda" }
+{ "$1": 3.7172648E7, "$2": 1, "#text": "Bahraini" }
+{ "$1": 1.3445768E8, "$2": 1, "#text": "Bakongo" }
+{ "$1": 8.8409504E7, "$2": 1, "#text": "Banda" }
+{ "$1": 1.1133048E8, "$2": 1, "#text": "Baya" }
+{ "$1": 1.89285264E8, "$2": 1, "#text": "Beja" }
+{ "$1": 1.20601549E10, "$2": 1, "#text": "Bengali" }
+{ "$1": 5.28207296E8, "$2": 1, "#text": "Berber Arab" }
+{ "$1": 3.9755292E7, "$2": 5, "#text": "Black" }
+{ "$1": 1.866025E7, "$2": 2, "#text": "Bosniak" }
+{ "$1": 4800.0, "$2": 1, "#text": "Bounty" }
+{ "$1": 1.15282688E9, "$2": 1, "#text": "British Isles" }
+{ "$1": 7.435959E8, "$2": 2, "#text": "Bulgarian" }
+{ "$1": 3.1263424E9, "$2": 1, "#text": "Burman" }
+{ "$1": 9.6847482E8, "$2": 6, "#text": "Byelorussian" }
+{ "$1": 2.59702502E9, "$2": 4, "#text": "Caucasian" }
+{ "$1": 3.25804518E9, "$2": 23, "#text": "Chinese" }
+{ "$1": 211007.98, "$2": 1, "#text": "Christian" }
+{ "$1": 1.77814176E8, "$2": 1, "#text": "Chuvash" }
+{ "$1": 4.65136576E8, "$2": 5, "#text": "Croat" }
+{ "$1": 9.7968806E8, "$2": 2, "#text": "Czech" }
+{ "$1": 2.456625E7, "$2": 1, "#text": "Dagestani Peoples" }
+{ "$1": 2.00486016E8, "$2": 1, "#text": "Djerma" }
+{ "$1": 1.49453133E9, "$2": 1, "#text": "Dutch" }
+{ "$1": 6.2939356E9, "$2": 1, "#text": "Eastern Hamitic" }
+{ "$1": 9.9830896E7, "$2": 1, "#text": "Eastern Nigritic" }
+{ "$1": 5.8089404E7, "$2": 1, "#text": "Emiri" }
+{ "$1": 4.766933E9, "$2": 1, "#text": "English" }
+{ "$1": 3575585.8, "$2": 1, "#text": "Euro-African" }
+{ "$1": 1500688.0, "$2": 1, "#text": "Euronesians" }
+{ "$1": 1.0987488E9, "$2": 19, "#text": "European" }
+{ "$1": 1.36165952E9, "$2": 1, "#text": "European European-Indian" }
+{ "$1": 4570530.0, "$2": 1, "#text": "European Syrian-Lebanese" }
+{ "$1": 8245200.0, "$2": 1, "#text": "European/Caribbean Indian" }
+{ "$1": 3.8336668E7, "$2": 1, "#text": "Fijian" }
+{ "$1": 1.5980823E7, "$2": 2, "#text": "Filipino" }
+{ "$1": 7.7460512E7, "$2": 1, "#text": "Fula" }
+{ "$1": 2.9719232E8, "$2": 2, "#text": "Fulani" }
+{ "$1": 1.5623464E7, "$2": 1, "#text": "Gagauz" }
+{ "$1": 8.9227756E9, "$2": 9, "#text": "German" }
+{ "$1": 1.0935602E7, "$2": 1, "#text": "Gourmantche" }
+{ "$1": 5005458.0, "$2": 1, "#text": "Greenlander" }
+{ "$1": 1.14343328E8, "$2": 1, "#text": "Gurage" }
+{ "$1": 1.6147466E7, "$2": 1, "#text": "Hindustani" }
+{ "$1": 5.4957133E9, "$2": 18, "#text": "Indian" }
+{ "$1": 7.7537408E7, "$2": 1, "#text": "Indo-Mauritian" }
+{ "$1": 9740182.0, "$2": 2, "#text": "Indonesian" }
+{ "$1": 1.40375952E8, "$2": 1, "#text": "Irish" }
+{ "$1": 6.12766E7, "$2": 4, "#text": "Italian" }
+{ "$1": 1.24697006E10, "$2": 1, "#text": "Japanese" }
+{ "$1": 9.3041992E9, "$2": 2, "#text": "Javanese" }
+{ "$1": 5.418985E8, "$2": 7, "#text": "Jewish" }
+{ "$1": 3.38120224E8, "$2": 1, "#text": "Kalenjin" }
+{ "$1": 3.09943552E8, "$2": 1, "#text": "Kamba" }
+{ "$1": 2.41898112E8, "$2": 1, "#text": "Karamojong" }
+{ "$1": 3.21829376E8, "$2": 1, "#text": "Karen" }
+{ "$1": 8.2310029E8, "$2": 4, "#text": "Kazak" }
+{ "$1": 5910520.0, "$2": 1, "#text": "Kgalagadi" }
+{ "$1": 6.198871E8, "$2": 1, "#text": "Kikuyu" }
+{ "$1": 2.37353568E8, "$2": 1, "#text": "Kirghiz" }
+{ "$1": 1.69060112E8, "$2": 1, "#text": "Kisii" }
+{ "$1": 8.7752112E7, "$2": 1, "#text": "Kuwaiti" }
+{ "$1": 1.20949056E8, "$2": 1, "#text": "Langi" }
+{ "$1": 1.09466984E8, "$2": 1, "#text": "Lao Theung" }
+{ "$1": 1.27893264E8, "$2": 1, "#text": "Latvian" }
+{ "$1": 2.92047872E8, "$2": 1, "#text": "Lithuanian" }
+{ "$1": 3.944736E8, "$2": 1, "#text": "Luhya" }
+{ "$1": 1.32188528E8, "$2": 1, "#text": "Lur" }
+{ "$1": 1.54958694E9, "$2": 1, "#text": "Madurese" }
+{ "$1": 6.8762944E7, "$2": 1, "#text": "Mandjia" }
+{ "$1": 2.0924343E9, "$2": 1, "#text": "Mangbetu-Azande" }
+{ "$1": 1.69060112E8, "$2": 1, "#text": "Meru" }
+{ "$1": 2527808.2, "$2": 3, "#text": "Mixed" }
+{ "$1": 9.1951248E7, "$2": 1, "#text": "Mon" }
+{ "$1": 507504.0, "$2": 1, "#text": "Monegasque" }
+{ "$1": 3.08101862E9, "$2": 2, "#text": "Mongol" }
+{ "$1": 2.54959744E8, "$2": 1, "#text": "Mossi" }
+{ "$1": 66405.6, "$2": 1, "#text": "Mulatto" }
+{ "$1": 2.13181024E8, "$2": 1, "#text": "Native American" }
+{ "$1": 6.3791876E7, "$2": 1, "#text": "Nepalese" }
+{ "$1": 98910.0, "$2": 1, "#text": "None" }
+{ "$1": 1.14092456E8, "$2": 1, "#text": "Northwestern Bantu" }
+{ "$1": 2.28686643E9, "$2": 1, "#text": "Oromo" }
+{ "$1": 1.565943E7, "$2": 1, "#text": "Ossetian" }
+{ "$1": 1.99347712E8, "$2": 2, "#text": "Palestinian Arab" }
+{ "$1": 8.6123718E8, "$2": 1, "#text": "Pashtun" }
+{ "$1": 3.37080755E9, "$2": 1, "#text": "Persian" }
+{ "$1": 4.60584672E8, "$2": 2, "#text": "Peuhl" }
+{ "$1": 4.0330364E7, "$2": 7, "#text": "Polynesian" }
+{ "$1": 1490511.0, "$2": 1, "#text": "Portuguese" }
+{ "$1": 1.83902496E8, "$2": 1, "#text": "Rakhine" }
+{ "$1": 1.18543744E8, "$2": 6, "#text": "Roma" }
+{ "$1": 3.274426E7, "$2": 1, "#text": "Sara" }
+{ "$1": 5.6150381E8, "$2": 1, "#text": "Scottish" }
+{ "$1": 1.54576736E8, "$2": 1, "#text": "Serer" }
+{ "$1": 7757500.0, "$2": 1, "#text": "Seychellois" }
+{ "$1": 4.13780608E8, "$2": 1, "#text": "Shan" }
+{ "$1": 3.43029984E8, "$2": 1, "#text": "Shankella" }
+{ "$1": 3420768.0, "$2": 1, "#text": "Sino-Mauritian" }
+{ "$1": 1.81688016E8, "$2": 3, "#text": "Slovene" }
+{ "$1": 5.7919568E7, "$2": 1, "#text": "Songhai" }
+{ "$1": 1.48239616E8, "$2": 1, "#text": "Soussou" }
+{ "$1": 1.1910164E8, "$2": 2, "#text": "Spanish" }
+{ "$1": 2.89256243E9, "$2": 1, "#text": "Sundanese" }
+{ "$1": 1.06064237E9, "$2": 3, "#text": "Tajik" }
+{ "$1": 1.69436608E8, "$2": 2, "#text": "Tuareg" }
+{ "$1": 5.1993078E9, "$2": 3, "#text": "Turkish" }
+{ "$1": 4.36331008E8, "$2": 2, "#text": "Turkmen" }
+{ "$1": 1.30213824E8, "$2": 1, "#text": "Tutsi" }
+{ "$1": 4.3865677E9, "$2": 10, "#text": "Ukrainian" }
+{ "$1": 1.05281952E8, "$2": 1, "#text": "Ulster" }
+{ "$1": 2.08726707E9, "$2": 6, "#text": "Uzbek" }
+{ "$1": 1.8553074E7, "$2": 1, "#text": "Vedda" }
+{ "$1": 6.3426673E9, "$2": 3, "#text": "Vietnamese" }
+{ "$1": 4975772.0, "$2": 1, "#text": "Vietnamese/Chinese" }
+{ "$1": 1.15839136E8, "$2": 1, "#text": "Voltaic" }
+{ "$1": 2046924.0, "$2": 1, "#text": "Wallisian" }
+{ "$1": 3.7171316E7, "$2": 1, "#text": "West Indian" }
+*/

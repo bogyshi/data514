@@ -1,0 +1,46 @@
+USE hw6;
+select distinct u .`#text`, count(w) as tot
+from world x, x.mondial.country y, CASE WHEN is_array(y.religions) OR y.religions IS MISSING THEN y.religions else [y.religions] END u,
+CASE WHEN is_array(y.name) THEN y.name else [y.name] END w
+group by u.`#text`
+order by tot desc;
+
+/*
+{ "tot": 104, "#text": "Roman Catholic" }
+{ "tot": 98, "#text": "Muslim" }
+{ "tot": 67, "#text": "Protestant" }
+{ "tot": 57, "#text": "Christian" }
+{ "tot": 22, "#text": "Christian Orthodox" }
+{ "tot": 16, "#text": "Anglican" }
+{ "tot": 15, "#text": "Buddhist" }
+{ "tot": 14, "#text": "Hindu" }
+{ "tot": 13, "#text": "Jewish" }
+{ "tot": 7, "#text": "Seventh-Day Adventist" }
+{ "tot": 5, "#text": "Baptist" }
+{ "tot": 4, "#text": "Methodist" }
+{ "tot": 3, "#text": "Presbyterian" }
+{ "tot": 3, "#text": "Church of God" }
+{ "tot": 2, "#text": "Mormon" }
+{ "tot": 2, "#text": "Bahai" }
+{ "tot": 2, "#text": "United Church" }
+{ "tot": 1, "#text": "United" }
+{ "tot": 1, "#text": "Judaism" }
+{ "tot": 1, "#text": "Pentecostal" }
+{ "tot": 1, "#text": "Church Christ" }
+{ "tot": 1, "#text": "Ekalesia Niue" }
+{ "tot": 1, "#text": "Uniting Church Australia" }
+{ "tot": 1, "#text": "Christian Congregationalist" }
+{ "tot": 1, "#text": "Sikh" }
+{ "tot": 1, "#text": "Druze" }
+{ "tot": 1, "#text": "Jains" }
+{ "tot": 1, "#text": "Taoist" }
+{ "tot": 1, "#text": "Chondogyo" }
+{ "tot": 1, "#text": "Kimbanguist" }
+{ "tot": 1, "#text": "Confucianism" }
+{ "tot": 1, "#text": "Episcopalian" }
+{ "tot": 1, "#text": "Church Tuvalu" }
+{ "tot": 1, "#text": "Coptic Christian" }
+{ "tot": 1, "#text": "Armenian Apostolic" }
+{ "tot": 1, "#text": "Evangelical Alliance" }
+{ "tot": 1, "#text": "African Methodist Episcopal" }
+*/

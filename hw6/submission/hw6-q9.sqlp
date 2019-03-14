@@ -1,0 +1,16 @@
+use hw6;
+Select a.name,b.name
+from world w,
+w.mondial.country a,
+w.mondial.country b,
+sea s1, split(s1.`-country`,' ') rc1,
+sea s2, split(s2.`-country`,' ') rc2,
+w.mondial.mountain y1, split(y1.`-country`, ' ') mc1,
+w.mondial.mountain y2, split(y2.`-country`, ' ') mc2
+where a.`-car_code` = rc1 and
+rc1 = mc1 and
+b.`-car_code` = rc2 and
+rc2=mc2 and
+s1.name = s2.name and
+y1.name = y2.name and
+a.`-car_code` < b.`-car_code`;

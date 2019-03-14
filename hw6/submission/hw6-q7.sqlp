@@ -1,0 +1,87 @@
+use hw6;
+Select x.`-car_code`,x.name, res
+from world w, w.mondial.country x, sea s , split(s.`-country`, ' ') z
+let res = (
+Select [s.name] from sea s,split(s.`-country`, ' ') z where z = x.`-car_code`
+)
+where x.`-car_code` = z
+group by x.`-car_code`,x.name,res
+HAVING count(z) >=2
+order by count(z) desc;
+
+/*
+{ "res": [ { "$1": [ "Sea of Azov" ] }, { "$1": [ "Baltic Sea" ] }, { "$1": [ "Barents Sea" ] }, { "$1": [ "Bering Sea" ] }, { "$1": [ "Sea of Okhotsk" ] }, { "$1": [ "Black Sea" ] }, { "$1": [ "Sibirian Sea" ] }, { "$1": [ "Arctic Ocean" ] }, { "$1": [ "Pacific Ocean" ] }, { "$1": [ "Sea of Japan" ] } ], "-car_code": "R", "name": "Russia" }
+{ "res": [ { "$1": [ "Sunda Sea" ] }, { "$1": [ "Pacific Ocean" ] }, { "$1": [ "South China Sea" ] }, { "$1": [ "Indian Ocean" ] }, { "$1": [ "Andaman Sea" ] }, { "$1": [ "Malakka Strait" ] }, { "$1": [ "Sulawesi Sea" ] } ], "-car_code": "RI", "name": "Indonesia" }
+{ "res": [ { "$1": [ "Bering Sea" ] }, { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Gulf of Mexico" ] }, { "$1": [ "Arctic Ocean" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "USA", "name": "United States" }
+{ "res": [ { "$1": [ "North Sea" ] }, { "$1": [ "The Channel" ] }, { "$1": [ "Irish Sea" ] }, { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Norwegian Sea" ] } ], "-car_code": "GB", "name": "United Kingdom" }
+{ "res": [ { "$1": [ "Skagerrak" ] }, { "$1": [ "Kattegat" ] }, { "$1": [ "North Sea" ] }, { "$1": [ "Baltic Sea" ] } ], "-car_code": "DK", "name": "Denmark" }
+{ "res": [ { "$1": [ "North Sea" ] }, { "$1": [ "The Channel" ] }, { "$1": [ "Mediterranean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "F", "name": "France" }
+{ "res": [ { "$1": [ "Gulf of Bengal" ] }, { "$1": [ "Indian Ocean" ] }, { "$1": [ "Arabian Sea" ] }, { "$1": [ "Andaman Sea" ] } ], "-car_code": "IND", "name": "India" }
+{ "res": [ { "$1": [ "Sea of Okhotsk" ] }, { "$1": [ "Pacific Ocean" ] }, { "$1": [ "Sea of Japan" ] }, { "$1": [ "East China Sea" ] } ], "-car_code": "J", "name": "Japan" }
+{ "res": [ { "$1": [ "Skagerrak" ] }, { "$1": [ "North Sea" ] }, { "$1": [ "Barents Sea" ] }, { "$1": [ "Norwegian Sea" ] } ], "-car_code": "N", "name": "Norway" }
+{ "res": [ { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Arctic Ocean" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "CDN", "name": "Canada" }
+{ "res": [ { "$1": [ "South China Sea" ] }, { "$1": [ "Malakka Strait" ] }, { "$1": [ "Sulawesi Sea" ] } ], "-car_code": "MAL", "name": "Malaysia" }
+{ "res": [ { "$1": [ "Indian Ocean" ] }, { "$1": [ "Arabian Sea" ] }, { "$1": [ "Gulf of Oman" ] } ], "-car_code": "PK", "name": "Pakistan" }
+{ "res": [ { "$1": [ "Pacific Ocean" ] }, { "$1": [ "East China Sea" ] }, { "$1": [ "South China Sea" ] } ], "-car_code": "RC", "name": "Taiwan" }
+{ "res": [ { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Norwegian Sea" ] }, { "$1": [ "Arctic Ocean" ] } ], "-car_code": "SVAX", "name": "Svalbard" }
+{ "res": [ { "$1": [ "South China Sea" ] }, { "$1": [ "Andaman Sea" ] }, { "$1": [ "Malakka Strait" ] } ], "-car_code": "THA", "name": "Thailand" }
+{ "res": [ { "$1": [ "Red Sea" ] }, { "$1": [ "Indian Ocean" ] }, { "$1": [ "Gulf of Aden" ] } ], "-car_code": "YE", "name": "Yemen" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Gulf of Mexico" ] } ], "-car_code": "C", "name": "Cuba" }
+{ "res": [ { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Norwegian Sea" ] }, { "$1": [ "Arctic Ocean" ] } ], "-car_code": "GROX", "name": "Greenland" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Gulf of Mexico" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "MEX", "name": "Mexico" }
+{ "res": [ { "$1": [ "Persian Gulf" ] }, { "$1": [ "Arabian Sea" ] }, { "$1": [ "Gulf of Oman" ] } ], "-car_code": "OM", "name": "Oman" }
+{ "res": [ { "$1": [ "Sea of Japan" ] }, { "$1": [ "Yellow Sea" ] }, { "$1": [ "East China Sea" ] } ], "-car_code": "ROK", "name": "South Korea" }
+{ "res": [ { "$1": [ "Pacific Ocean" ] }, { "$1": [ "South China Sea" ] }, { "$1": [ "Sulawesi Sea" ] } ], "-car_code": "RP", "name": "Philippines" }
+{ "res": [ { "$1": [ "Skagerrak" ] }, { "$1": [ "Kattegat" ] }, { "$1": [ "Baltic Sea" ] } ], "-car_code": "S", "name": "Sweden" }
+{ "res": [ { "$1": [ "South China Sea" ] }, { "$1": [ "Indian Ocean" ] }, { "$1": [ "Malakka Strait" ] } ], "-car_code": "SGP", "name": "Singapore" }
+{ "res": [ { "$1": [ "Yellow Sea" ] }, { "$1": [ "East China Sea" ] }, { "$1": [ "South China Sea" ] } ], "-car_code": "TJ", "name": "China" }
+{ "res": [ { "$1": [ "Pacific Ocean" ] }, { "$1": [ "Indian Ocean" ] } ], "-car_code": "AUS", "name": "Australia" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "DOM", "name": "Dominican Republic" }
+{ "res": [ { "$1": [ "Mediterranean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "E", "name": "Spain" }
+{ "res": [ { "$1": [ "Mediterranean Sea" ] }, { "$1": [ "Red Sea" ] } ], "-car_code": "ET", "name": "Egypt" }
+{ "res": [ { "$1": [ "Mediterranean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "GBZ", "name": "Gibraltar" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "HCA", "name": "Honduras" }
+{ "res": [ { "$1": [ "Persian Gulf" ] }, { "$1": [ "Gulf of Oman" ] } ], "-car_code": "IR", "name": "Iran" }
+{ "res": [ { "$1": [ "Irish Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "IRL", "name": "Ireland" }
+{ "res": [ { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Norwegian Sea" ] } ], "-car_code": "IS", "name": "Iceland" }
+{ "res": [ { "$1": [ "Mediterranean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "MA", "name": "Morocco" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "MNTS", "name": "Montserrat" }
+{ "res": [ { "$1": [ "Gulf of Bengal" ] }, { "$1": [ "Andaman Sea" ] } ], "-car_code": "MYA", "name": "Myanmar" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "NIC", "name": "Nicaragua" }
+{ "res": [ { "$1": [ "Sea of Japan" ] }, { "$1": [ "Yellow Sea" ] } ], "-car_code": "NOK", "name": "North Korea" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "PR", "name": "Puerto Rico" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "RH", "name": "Haiti" }
+{ "res": [ { "$1": [ "Red Sea" ] }, { "$1": [ "Persian Gulf" ] } ], "-car_code": "SA", "name": "Saudi Arabia" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "SMAR", "name": "Saint Martin" }
+{ "res": [ { "$1": [ "Sunda Sea" ] }, { "$1": [ "Indian Ocean" ] } ], "-car_code": "TL", "name": "Timor-Leste" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "TT", "name": "Trinidad and Tobago" }
+{ "res": [ { "$1": [ "Sea of Azov" ] }, { "$1": [ "Black Sea" ] } ], "-car_code": "UA", "name": "Ukraine" }
+{ "res": [ { "$1": [ "Persian Gulf" ] }, { "$1": [ "Gulf of Oman" ] } ], "-car_code": "UAE", "name": "United Arab Emirates" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "VIRG", "name": "Virgin Islands" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "WL", "name": "Saint Lucia" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "WV", "name": "Saint Vincent and the Grenadines" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "AG", "name": "Antigua and Barbuda" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "AXA", "name": "Anguilla" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "BVIR", "name": "British Virgin Islands" }
+{ "res": [ { "$1": [ "Gulf of Bengal" ] }, { "$1": [ "Indian Ocean" ] } ], "-car_code": "CL", "name": "Sri Lanka" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "CO", "name": "Colombia" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "CR", "name": "Costa Rica" }
+{ "res": [ { "$1": [ "North Sea" ] }, { "$1": [ "Baltic Sea" ] } ], "-car_code": "D", "name": "Germany" }
+{ "res": [ { "$1": [ "Red Sea" ] }, { "$1": [ "Gulf of Aden" ] } ], "-car_code": "DJI", "name": "Djibouti" }
+{ "res": [ { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Norwegian Sea" ] } ], "-car_code": "FARX", "name": "Faroe Islands" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "GCA", "name": "Guatemala" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "GUAD", "name": "Guadeloupe" }
+{ "res": [ { "$1": [ "Mediterranean Sea" ] }, { "$1": [ "Red Sea" ] } ], "-car_code": "IL", "name": "Israel" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "KN", "name": "Saint Kitts and Nevis" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "MART", "name": "Martinique" }
+{ "res": [ { "$1": [ "Pacific Ocean" ] }, { "$1": [ "Indian Ocean" ] } ], "-car_code": "MV", "name": "Maldives" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "NA", "name": "Netherlands Antilles" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "PA", "name": "Panama" }
+{ "res": [ { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Pacific Ocean" ] } ], "-car_code": "RCH", "name": "Chile" }
+{ "res": [ { "$1": [ "Atlantic Ocean" ] }, { "$1": [ "Indian Ocean" ] } ], "-car_code": "RSA", "name": "South Africa" }
+{ "res": [ { "$1": [ "Indian Ocean" ] }, { "$1": [ "Gulf of Aden" ] } ], "-car_code": "SP", "name": "Somalia" }
+{ "res": [ { "$1": [ "Mediterranean Sea" ] }, { "$1": [ "Black Sea" ] } ], "-car_code": "TR", "name": "Turkey" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "WD", "name": "Dominica" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "WG", "name": "Grenada" }
+{ "res": [ { "$1": [ "Caribbean Sea" ] }, { "$1": [ "Atlantic Ocean" ] } ], "-car_code": "YV", "name": "Venezuela" }
+*/

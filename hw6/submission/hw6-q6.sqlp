@@ -1,0 +1,259 @@
+use hw6;
+select a.name as countryName ,a.`-car_code` as cc, (res)
+from world w,
+     w.mondial.country a
+let res = (
+Select [y.name,h] from world w,
+     w.mondial.mountain y, split(y.`-country`, ' ') z
+  let h = int(y.height)
+     where a.`-car_code` = z
+),
+num =  (
+Select count(z) from world w,
+     w.mondial.mountain y, split(y.`-country`, ' ') z
+where z = a.`-car_code`
+group by z
+)
+order by num desc
+;
+
+/*
+{ "res": [ { "$1": [ "Mauna Kea", 4214 ] }, { "$1": [ "Mauna Loa", 4170 ] }, { "$1": [ "Haleakala", 3055 ] }, { "$1": [ "Mt Redoubt", 3108 ] }, { "$1": [ "Mt McKinley", 6193 ] }, { "$1": [ "Mt Blackburn", 4996 ] }, { "$1": [ "Mt Bona", 5005 ] }, { "$1": [ "Mt St.Elias", 5489 ] }, { "$1": [ "Mt Fairweather", 4663 ] }, { "$1": [ "Granite Peak", 3901 ] }, { "$1": [ "Borah Peak", 3859 ] }, { "$1": [ "Harney Peak", 2207 ] }, { "$1": [ "Gannett Peak", 4207 ] }, { "$1": [ "Kings Peak", 4123 ] }, { "$1": [ "Mt Elbert", 4401 ] }, { "$1": [ "Pikes Peak", 4302 ] }, { "$1": [ "Wheeler Peak", 4011 ] }, { "$1": [ "Humphreys Peak", 3850 ] }, { "$1": [ "Guadalupe Peak", 2667 ] }, { "$1": [ "Mt Rainier", 4392 ] }, { "$1": [ "Mt Adams", 3743 ] }, { "$1": [ "Mt Hood", 3424 ] }, { "$1": [ "Mt Whitney", 4418 ] }, { "$1": [ "Boundary Peak", 4006 ] }, { "$1": [ "Mt Washington", 1917 ] }, { "$1": [ "Mt Marcy", 1629 ] }, { "$1": [ "Mt Mitchell", 2037 ] }, { "$1": [ "Clingmans Dome", 2025 ] } ], "countryName": "United States", "cc": "USA" }
+{ "res": [ { "$1": [ "Pik Pobeda", 7439 ] }, { "$1": [ "K2", 8611 ] }, { "$1": [ "Gasherbrum II", 8034 ] }, { "$1": [ "Gasherbrum I", 8080 ] }, { "$1": [ "Broad Peak", 8051 ] }, { "$1": [ "Shishapangma", 8027 ] }, { "$1": [ "Kailash", 6714 ] }, { "$1": [ "Cho Oyu", 8188 ] }, { "$1": [ "Mount Everest", 8848 ] }, { "$1": [ "Lhotse", 8516 ] }, { "$1": [ "Makalu", 8485 ] }, { "$1": [ "Changbai Shan", 2744 ] } ], "countryName": "China", "cc": "TJ" }
+{ "res": [ { "$1": [ "Leuser", 3466 ] }, { "$1": [ "Kerinci", 3805 ] }, { "$1": [ "Krakatau", 813 ] }, { "$1": [ "Merapi", 2914 ] }, { "$1": [ "Semeru", 3676 ] }, { "$1": [ "Gunung Agung", 3142 ] }, { "$1": [ "Rinjani", 3726 ] }, { "$1": [ "Tambora", 2850 ] }, { "$1": [ "Rantekombola", 3455 ] }, { "$1": [ "Gunung Binaiya", 3027 ] }, { "$1": [ "Puncak Jaya", 4884 ] } ], "countryName": "Indonesia", "cc": "RI" }
+{ "res": [ { "$1": [ "Mont Blanc", 4808 ] }, { "$1": [ "Matterhorn", 4478 ] }, { "$1": [ "Monte Rosa", 4634 ] }, { "$1": [ "GranParadiso", 4061 ] }, { "$1": [ "Piz Bernina", 4048 ] }, { "$1": [ "Marmolata", 3343 ] }, { "$1": [ "Gran Sasso", 2912 ] }, { "$1": [ "Monte Falterona", 1654 ] }, { "$1": [ "Vesuv", 1281 ] }, { "$1": [ "Etna", 3323 ] } ], "countryName": "Italy", "cc": "I" }
+{ "res": [ { "$1": [ "Mt Bona", 5005 ] }, { "$1": [ "Mt St.Elias", 5489 ] }, { "$1": [ "Mt Logan", 5959 ] }, { "$1": [ "Mt Fairweather", 4663 ] }, { "$1": [ "Mt Waddington", 4019 ] }, { "$1": [ "Mt Robson", 3954 ] }, { "$1": [ "Mt Columbia", 3747 ] }, { "$1": [ "Barbeau Peak", 2616 ] }, { "$1": [ "Mt. Odin", 2147 ] }, { "$1": [ "Mt. Babel", 952 ] } ], "countryName": "Canada", "cc": "CDN" }
+{ "res": [ { "$1": [ "Vignemale", 3298 ] }, { "$1": [ "Pico de Aneto", 3404 ] }, { "$1": [ "Torre de Cerredo", 2648 ] }, { "$1": [ "Pico de Almanzor", 2648 ] }, { "$1": [ "Moncayo", 2313 ] }, { "$1": [ "Mulhacen", 3482 ] }, { "$1": [ "Pico de Teide", 3718 ] }, { "$1": [ "Pico de los Nieves", 1949 ] }, { "$1": [ "Roque de los Muchachos", 2426 ] } ], "countryName": "Spain", "cc": "E" }
+{ "res": [ { "$1": [ "Dhaulagiri", 8167 ] }, { "$1": [ "Annapurna", 8091 ] }, { "$1": [ "Manaslu", 8163 ] }, { "$1": [ "Cho Oyu", 8188 ] }, { "$1": [ "Mount Everest", 8848 ] }, { "$1": [ "Lhotse", 8516 ] }, { "$1": [ "Makalu", 8485 ] }, { "$1": [ "Kangchendzonga", 8586 ] } ], "countryName": "Nepal", "cc": "NEP" }
+{ "res": [ { "$1": [ "Mont Blanc", 4808 ] }, { "$1": [ "Barre des Ecrins", 4101 ] }, { "$1": [ "Grand Ballon", 1424 ] }, { "$1": [ "Puy De Dome", 1465 ] }, { "$1": [ "Puy de Sancy", 1885 ] }, { "$1": [ "Vignemale", 3298 ] }, { "$1": [ "Monte Cinto", 2706 ] } ], "countryName": "France", "cc": "F" }
+{ "res": [ { "$1": [ "GrandCombin", 4314 ] }, { "$1": [ "Matterhorn", 4478 ] }, { "$1": [ "Monte Rosa", 4634 ] }, { "$1": [ "Finsteraarhorn", 4274 ] }, { "$1": [ "Piz Bernina", 4048 ] }, { "$1": [ "Crap_Sogn_Gion", 2228 ] } ], "countryName": "Switzerland", "cc": "CH" }
+{ "res": [ { "$1": [ "Narodnaja", 1895 ] }, { "$1": [ "Elbrus", 5642 ] }, { "$1": [ "Kasbek", 5033 ] }, { "$1": [ "Zhima", 1276 ] }, { "$1": [ "Bjelucha", 4506 ] }, { "$1": [ "Kljutschewskaja Sopka", 4750 ] } ], "countryName": "Russia", "cc": "R" }
+{ "res": [ { "$1": [ "Huascaran", 6768 ] }, { "$1": [ "Alpamayo", 5947 ] }, { "$1": [ "Pico Rocarre", 5187 ] }, { "$1": [ "Ausangate", 6336 ] }, { "$1": [ "Coropuna", 6425 ] }, { "$1": [ "Ampato", 6288 ] } ], "countryName": "Peru", "cc": "PE" }
+{ "res": [ { "$1": [ "Sulitjelma", 1914 ] }, { "$1": [ "Galdhoeppig", 2469 ] }, { "$1": [ "Jostedalsbre", 2083 ] }, { "$1": [ "Glittertind", 2452 ] }, { "$1": [ "Joekul", 1876 ] }, { "$1": [ "Snoehetta", 2286 ] } ], "countryName": "Norway", "cc": "N" }
+{ "res": [ { "$1": [ "Kebnekaise", 2114 ] }, { "$1": [ "Sarektjokko", 2090 ] }, { "$1": [ "Portefjaellen", 2021 ] }, { "$1": [ "Tarrekaise", 1850 ] }, { "$1": [ "Sulitjelma", 1914 ] } ], "countryName": "Sweden", "cc": "S" }
+{ "res": [ { "$1": [ "K2", 8611 ] }, { "$1": [ "Gasherbrum II", 8034 ] }, { "$1": [ "Gasherbrum I", 8080 ] }, { "$1": [ "Broad Peak", 8051 ] }, { "$1": [ "Nanga Parbat", 8125 ] } ], "countryName": "Pakistan", "cc": "PK" }
+{ "res": [ { "$1": [ "Pik Kommunizma", 7494 ] }, { "$1": [ "Pik Lenina", 7134 ] }, { "$1": [ "Pik Revoluzija", 6974 ] }, { "$1": [ "Pik Moskva", 6785 ] }, { "$1": [ "Pik Karl-Marx", 6726 ] } ], "countryName": "Tajikistan", "cc": "TAD" }
+{ "res": [ { "$1": [ "Pulog", 2928 ] }, { "$1": [ "Pinatubo", 1486 ] }, { "$1": [ "Mount Apo", 2954 ] }, { "$1": [ "Kanlaon", 2435 ] }, { "$1": [ "Mantalingajan", 2085 ] } ], "countryName": "Philippines", "cc": "RP" }
+{ "res": [ { "$1": [ "Llullaillaco", 6739 ] }, { "$1": [ "Ojos del Salado", 6893 ] }, { "$1": [ "Monte Pissis", 6795 ] }, { "$1": [ "Aconcagua", 6962 ] }, { "$1": [ "Tupungato", 6550 ] } ], "countryName": "Argentina", "cc": "RA" }
+{ "res": [ { "$1": [ "Citlaltepetl (Pico de Orizaba)", 5700 ] }, { "$1": [ "Popocatepetl", 5450 ] }, { "$1": [ "Iztaccihuatl", 5286 ] }, { "$1": [ "Nevado de Toluca", 4558 ] }, { "$1": [ "Nevado de Colima", 4330 ] } ], "countryName": "Mexico", "cc": "MEX" }
+{ "res": [ { "$1": [ "Feldberg", 1493 ] }, { "$1": [ "Brocken", 1141 ] }, { "$1": [ "Grosser Arber", 1456 ] }, { "$1": [ "Zugspitze", 2963 ] } ], "countryName": "Germany", "cc": "D" }
+{ "res": [ { "$1": [ "Hvannadalshnukur", 2110 ] }, { "$1": [ "Snaefell", 1833 ] }, { "$1": [ "Hekla", 1491 ] }, { "$1": [ "Katla", 1450 ] } ], "countryName": "Iceland", "cc": "IS" }
+{ "res": [ { "$1": [ "Illampu", 6368 ] }, { "$1": [ "Illimani", 6439 ] }, { "$1": [ "Sajama", 6542 ] }, { "$1": [ "Licancabur", 5920 ] } ], "countryName": "Bolivia", "cc": "BOL" }
+{ "res": [ { "$1": [ "Zugspitze", 2963 ] }, { "$1": [ "Grossglockner", 3797 ] }, { "$1": [ "Hochgolling", 2862 ] } ], "countryName": "Austria", "cc": "A" }
+{ "res": [ { "$1": [ "Torre de Estrela", 1993 ] }, { "$1": [ "Pico Ruivo", 1861 ] }, { "$1": [ "Pico", 2351 ] } ], "countryName": "Portugal", "cc": "P" }
+{ "res": [ { "$1": [ "Pik Chan-Tengri", 6995 ] }, { "$1": [ "Pik Pobeda", 7439 ] }, { "$1": [ "Pik Lenina", 7134 ] } ], "countryName": "Kyrgyzstan", "cc": "KGZ" }
+{ "res": [ { "$1": [ "Licancabur", 5920 ] }, { "$1": [ "Llullaillaco", 6739 ] }, { "$1": [ "Ojos del Salado", 6893 ] } ], "countryName": "Chile", "cc": "RCH" }
+{ "res": [ { "$1": [ "Cayambe", 5796 ] }, { "$1": [ "Cotopaxi", 5897 ] }, { "$1": [ "Chimborazo", 6287 ] } ], "countryName": "Ecuador", "cc": "EC" }
+{ "res": [ { "$1": [ "Kilimanjaro", 5895 ] }, { "$1": [ "Mawenzi", 5148 ] }, { "$1": [ "Meru", 4567 ] } ], "countryName": "Tanzania", "cc": "EAT" }
+{ "res": [ { "$1": [ "Tsaratanana", 2876 ] }, { "$1": [ "Tsiafajavona", 2642 ] }, { "$1": [ "Andringitra", 2658 ] } ], "countryName": "Madagascar", "cc": "RM" }
+{ "res": [ { "$1": [ "Damavand", 5610 ] }, { "$1": [ "Sabalan", 4811 ] }, { "$1": [ "Zard Kuh", 4550 ] } ], "countryName": "Iran", "cc": "IR" }
+{ "res": [ { "$1": [ "Dodabetta", 2636 ] }, { "$1": [ "Nanda Devi", 7816 ] }, { "$1": [ "Kangchendzonga", 8586 ] } ], "countryName": "India", "cc": "IND" }
+{ "res": [ { "$1": [ "Mt. Wilhelm", 4509 ] }, { "$1": [ "Mt. Giluwe", 4368 ] }, { "$1": [ "Mt. Balbi", 2715 ] } ], "countryName": "Papua New Guinea", "cc": "PNG" }
+{ "res": [ { "$1": [ "Asahi-Dake", 2290 ] }, { "$1": [ "Fujisan", 3776 ] }, { "$1": [ "Hotaka-Dake", 3190 ] } ], "countryName": "Japan", "cc": "J" }
+{ "res": [ { "$1": [ "Pico Cristobal Colon", 5775 ] }, { "$1": [ "Nevado del Ruiz", 5389 ] }, { "$1": [ "Nevado del Huila", 5750 ] } ], "countryName": "Colombia", "cc": "CO" }
+{ "res": [ { "$1": [ "Mt. Kosciuszko", 2228 ] }, { "$1": [ "Mt. Bogong", 1986 ] }, { "$1": [ "Uluru", 869 ] } ], "countryName": "Australia", "cc": "AUS" }
+{ "res": [ { "$1": [ "Irazu", 3432 ] }, { "$1": [ "Cerro Chirripo", 3819 ] } ], "countryName": "Costa Rica", "cc": "CR" }
+{ "res": [ { "$1": [ "Mt. Cook", 3754 ] }, { "$1": [ "Ruapehu", 2797 ] } ], "countryName": "New Zealand", "cc": "NZ" }
+{ "res": [ { "$1": [ "Tamgak", 1800 ] }, { "$1": [ "Mont Greboun", 1944 ] } ], "countryName": "Niger", "cc": "RN" }
+{ "res": [ { "$1": [ "Ruwenzori", 5109 ] }, { "$1": [ "Karisimbi", 4507 ] } ], "countryName": "Zaire", "cc": "ZRE" }
+{ "res": [ { "$1": [ "Elgon", 4321 ] }, { "$1": [ "Kenia", 5199 ] } ], "countryName": "Kenya", "cc": "EAK" }
+{ "res": [ { "$1": [ "Jezerce", 2694 ] }, { "$1": [ "Korab", 2751 ] } ], "countryName": "Albania", "cc": "AL" }
+{ "res": [ { "$1": [ "Olymp", 2917 ] }, { "$1": [ "Psiloritis", 2456 ] } ], "countryName": "Greece", "cc": "GR" }
+{ "res": [ { "$1": [ "Demirkazik", 3756 ] }, { "$1": [ "Ararat", 5165 ] } ], "countryName": "Turkey", "cc": "TR" }
+{ "res": [ { "$1": [ "Kinabalu", 4101 ] }, { "$1": [ "Tahan", 2190 ] } ], "countryName": "Malaysia", "cc": "MAL" }
+{ "res": [ { "$1": [ "Tubkhal", 4165 ] }, { "$1": [ "Djebel Aures", 2456 ] } ], "countryName": "Morocco", "cc": "MA" }
+{ "res": [ { "$1": [ "Ruwenzori", 5109 ] }, { "$1": [ "Elgon", 4321 ] } ], "countryName": "Uganda", "cc": "EAU" }
+{ "res": [ { "$1": [ "Piton des Neiges", 3069 ] }, { "$1": [ "Piton de la Fournaise", 2631 ] } ], "countryName": "Reunion", "cc": "REUN" }
+{ "res": [ { "$1": [ "Korab", 2751 ] } ], "countryName": "Macedonia", "cc": "MK" }
+{ "res": [ { "$1": [ "GerlachovskyStit", 2655 ] } ], "countryName": "Slovakia", "cc": "SK" }
+{ "res": [ { "$1": [ "Musala", 2925 ] } ], "countryName": "Bulgaria", "cc": "BG" }
+{ "res": [ { "$1": [ "Moldoveanu", 2544 ] } ], "countryName": "Romania", "cc": "RO" }
+{ "res": [ { "$1": [ "Ben Nevis", 1344 ] } ], "countryName": "United Kingdom", "cc": "GB" }
+{ "res": [ { "$1": [ "Kasbek", 5033 ] } ], "countryName": "Georgia", "cc": "GE" }
+{ "res": [ { "$1": [ "Tatamailau", 2963 ] } ], "countryName": "Timor-Leste", "cc": "TL" }
+{ "res": [ { "$1": [ "Jabal Lubnan", 3088 ] } ], "countryName": "Lebanon", "cc": "RL" }
+{ "res": [ { "$1": [ "Pidurutalagala", 2524 ] } ], "countryName": "Sri Lanka", "cc": "CL" }
+{ "res": [ { "$1": [ "Yu Shan", 3950 ] } ], "countryName": "Taiwan", "cc": "RC" }
+{ "res": [ { "$1": [ "Tajumulco", 4220 ] } ], "countryName": "Guatemala", "cc": "GCA" }
+{ "res": [ { "$1": [ "Concepcion", 1700 ] } ], "countryName": "Nicaragua", "cc": "NIC" }
+{ "res": [ { "$1": [ "Morne Diablotins", 1447 ] } ], "countryName": "Dominica", "cc": "WD" }
+{ "res": [ { "$1": [ "Pico Duarte", 3098 ] } ], "countryName": "Dominican Republic", "cc": "DOM" }
+{ "res": [ { "$1": [ "Blue Mountain Peak", 2256 ] } ], "countryName": "Jamaica", "cc": "JA" }
+{ "res": [ { "$1": [ "Pelee", 1397 ] } ], "countryName": "Martinique", "cc": "MART" }
+{ "res": [ { "$1": [ "Cerro de Punta", 1338 ] } ], "countryName": "Puerto Rico", "cc": "PR" }
+{ "res": [ { "$1": [ "Mt.Victoria", 1323 ] } ], "countryName": "Fiji", "cc": "FJI" }
+{ "res": [ { "$1": [ "Mont Orohena", 2241 ] } ], "countryName": "French Polynesia", "cc": "FPOL" }
+{ "res": [ { "$1": [ "Pico de Agulhas Negras", 2791 ] } ], "countryName": "Brazil", "cc": "BR" }
+{ "res": [ { "$1": [ "Tahat", 3003 ] } ], "countryName": "Algeria", "cc": "DZ" }
+{ "res": [ { "$1": [ "Emi Kussi", 3415 ] } ], "countryName": "Chad", "cc": "TCH" }
+{ "res": [ { "$1": [ "Jabal Marra", 3088 ] } ], "countryName": "Sudan", "cc": "SUD" }
+{ "res": [ { "$1": [ "Ras Daschan Terara", 4533 ] } ], "countryName": "Ethiopia", "cc": "ETH" }
+{ "res": [ { "$1": [ "Thabana Ntlenyana", 3482 ] } ], "countryName": "Lesotho", "cc": "LS" }
+{ "res": [ { "$1": [ "Queen Marys Peak", 2060 ] } ], "countryName": "Saint Helena", "cc": "HELX" }
+{ "res": [ { "$1": [ "Schneekoppe", 1602 ] } ], "countryName": "Czech Republic", "cc": "CZ" }
+{ "res": [ { "$1": [ "Schneekoppe", 1602 ] } ], "countryName": "Poland", "cc": "PL" }
+{ "res": [ { "$1": [ "Haltiatunturi", 1328 ] } ], "countryName": "Finland", "cc": "SF" }
+{ "res": [ { "$1": [ "Tirich Mir", 7690 ] } ], "countryName": "Afghanistan", "cc": "AFG" }
+{ "res": [ { "$1": [ "Bjelucha", 4506 ] } ], "countryName": "Kazakstan", "cc": "KAZ" }
+{ "res": [ { "$1": [ "Changbai Shan", 2744 ] } ], "countryName": "North Korea", "cc": "NOK" }
+{ "res": [ { "$1": [ "Olympos", 1952 ] } ], "countryName": "Cyprus", "cc": "CY" }
+{ "res": [ { "$1": [ "Jabal Katrina", 2637 ] } ], "countryName": "Egypt", "cc": "ET" }
+{ "res": [ { "$1": [ "Jabal Shuayb", 3760 ] } ], "countryName": "Yemen", "cc": "YE" }
+{ "res": [ { "$1": [ "Pico Turquino", 1974 ] } ], "countryName": "Cuba", "cc": "C" }
+{ "res": [ { "$1": [ "La Soufriere", 1467 ] } ], "countryName": "Guadeloupe", "cc": "GUAD" }
+{ "res": [ { "$1": [ "Soufriere Hills", 1050 ] } ], "countryName": "Montserrat", "cc": "MNTS" }
+{ "res": [ { "$1": [ "Soufriere", 1220 ] } ], "countryName": "Saint Vincent and the Grenadines", "cc": "WV" }
+{ "res": [ { "$1": [ "Popomanaseu", 2335 ] } ], "countryName": "Solomon Islands", "cc": "SLB" }
+{ "res": [ { "$1": [ "Silisili", 1858 ] } ], "countryName": "Samoa", "cc": "WS" }
+{ "res": [ { "$1": [ "Pico Bolivar", 4981 ] } ], "countryName": "Venezuela", "cc": "YV" }
+{ "res": [ { "$1": [ "Cathkin Peak", 3181 ] } ], "countryName": "South Africa", "cc": "RSA" }
+{ "res": [ { "$1": [ "Karisimbi", 4507 ] } ], "countryName": "Rwanda", "cc": "RWA" }
+{ "res": [ { "$1": [ "Fako", 4095 ] } ], "countryName": "Cameroon", "cc": "CAM" }
+{ "res": [ { "$1": [ "Pico Basile", 3011 ] } ], "countryName": "Equatorial Guinea", "cc": "GQ" }
+{ "res": [ { "$1": [ "Fogo", 2829 ] } ], "countryName": "Cape Verde", "cc": "CV" }
+{ "res": [ { "$1": [ "Pico de Sao Tome", 2024 ] } ], "countryName": "Sao Tome and Principe", "cc": "STP" }
+{ "res": [  ], "countryName": "Serbia", "cc": "SRB" }
+{ "res": [  ], "countryName": "Andorra", "cc": "AND" }
+{ "res": [  ], "countryName": "Liechtenstein", "cc": "FL" }
+{ "res": [  ], "countryName": "Belarus", "cc": "BY" }
+{ "res": [  ], "countryName": "Croatia", "cc": "HR" }
+{ "res": [  ], "countryName": "Denmark", "cc": "DK" }
+{ "res": [  ], "countryName": "Faroe Islands", "cc": "FARX" }
+{ "res": [  ], "countryName": "Gibraltar", "cc": "GBZ" }
+{ "res": [  ], "countryName": "Guernsey", "cc": "GBG" }
+{ "res": [  ], "countryName": "Holy See", "cc": "V" }
+{ "res": [  ], "countryName": "Ireland", "cc": "IRL" }
+{ "res": [  ], "countryName": "San Marino", "cc": "RSM" }
+{ "res": [  ], "countryName": "Malta", "cc": "M" }
+{ "res": [  ], "countryName": "Moldova", "cc": "MD" }
+{ "res": [  ], "countryName": "Svalbard", "cc": "SVAX" }
+{ "res": [  ], "countryName": "Turkmenistan", "cc": "TM" }
+{ "res": [  ], "countryName": "Uzbekistan", "cc": "UZB" }
+{ "res": [  ], "countryName": "Armenia", "cc": "ARM" }
+{ "res": [  ], "countryName": "Thailand", "cc": "THA" }
+{ "res": [  ], "countryName": "Hong Kong", "cc": "HONX" }
+{ "res": [  ], "countryName": "Macau", "cc": "MACX" }
+{ "res": [  ], "countryName": "Mongolia", "cc": "MNG" }
+{ "res": [  ], "countryName": "Christmas Island", "cc": "XMAS" }
+{ "res": [  ], "countryName": "Israel", "cc": "IL" }
+{ "res": [  ], "countryName": "Kuwait", "cc": "KWT" }
+{ "res": [  ], "countryName": "Saudi Arabia", "cc": "SA" }
+{ "res": [  ], "countryName": "Oman", "cc": "OM" }
+{ "res": [  ], "countryName": "United Arab Emirates", "cc": "UAE" }
+{ "res": [  ], "countryName": "Qatar", "cc": "Q" }
+{ "res": [  ], "countryName": "Singapore", "cc": "SGP" }
+{ "res": [  ], "countryName": "Anguilla", "cc": "AXA" }
+{ "res": [  ], "countryName": "Bermuda", "cc": "BERM" }
+{ "res": [  ], "countryName": "Cayman Islands", "cc": "CAYM" }
+{ "res": [  ], "countryName": "Panama", "cc": "PA" }
+{ "res": [  ], "countryName": "Haiti", "cc": "RH" }
+{ "res": [  ], "countryName": "Honduras", "cc": "HCA" }
+{ "res": [  ], "countryName": "Grenada", "cc": "WG" }
+{ "res": [  ], "countryName": "Netherlands Antilles", "cc": "NA" }
+{ "res": [  ], "countryName": "Saint Martin", "cc": "SMAR" }
+{ "res": [  ], "countryName": "Saint Kitts and Nevis", "cc": "KN" }
+{ "res": [  ], "countryName": "Saint Lucia", "cc": "WL" }
+{ "res": [  ], "countryName": "Trinidad and Tobago", "cc": "TT" }
+{ "res": [  ], "countryName": "Turks and Caicos Islands", "cc": "TUCA" }
+{ "res": [  ], "countryName": "Virgin Islands", "cc": "VIRG" }
+{ "res": [  ], "countryName": "American Samoa", "cc": "AMSA" }
+{ "res": [  ], "countryName": "Marshall Islands", "cc": "MH" }
+{ "res": [  ], "countryName": "Nauru", "cc": "NAU" }
+{ "res": [  ], "countryName": "New Caledonia", "cc": "NCA" }
+{ "res": [  ], "countryName": "Niue", "cc": "NIUE" }
+{ "res": [  ], "countryName": "Tuvalu", "cc": "TUV" }
+{ "res": [  ], "countryName": "Vanuatu", "cc": "VU" }
+{ "res": [  ], "countryName": "Paraguay", "cc": "PY" }
+{ "res": [  ], "countryName": "French Guiana", "cc": "FGU" }
+{ "res": [  ], "countryName": "Libya", "cc": "LAR" }
+{ "res": [  ], "countryName": "Namibia", "cc": "NAM" }
+{ "res": [  ], "countryName": "Benin", "cc": "BEN" }
+{ "res": [  ], "countryName": "Burkina Faso", "cc": "BF" }
+{ "res": [  ], "countryName": "Nigeria", "cc": "WAN" }
+{ "res": [  ], "countryName": "Botswana", "cc": "RB" }
+{ "res": [  ], "countryName": "Zimbabwe", "cc": "ZW" }
+{ "res": [  ], "countryName": "Cote dIvoire", "cc": "CI" }
+{ "res": [  ], "countryName": "Central African Republic", "cc": "RCA" }
+{ "res": [  ], "countryName": "Gabon", "cc": "G" }
+{ "res": [  ], "countryName": "Liberia", "cc": "LB" }
+{ "res": [  ], "countryName": "Somalia", "cc": "SP" }
+{ "res": [  ], "countryName": "Gambia", "cc": "WAG" }
+{ "res": [  ], "countryName": "Guinea-Bissau", "cc": "GNB" }
+{ "res": [  ], "countryName": "Sierra Leone", "cc": "WAL" }
+{ "res": [  ], "countryName": "Malawi", "cc": "MW" }
+{ "res": [  ], "countryName": "Mayotte", "cc": "MAYO" }
+{ "res": [  ], "countryName": "Seychelles", "cc": "SY" }
+{ "res": [  ], "countryName": "Montenegro", "cc": "MNE" }
+{ "res": [  ], "countryName": "Kosovo", "cc": "KOS" }
+{ "res": [  ], "countryName": "Hungary", "cc": "H" }
+{ "res": [  ], "countryName": "Slovenia", "cc": "SLO" }
+{ "res": [  ], "countryName": "Latvia", "cc": "LV" }
+{ "res": [  ], "countryName": "Lithuania", "cc": "LT" }
+{ "res": [  ], "countryName": "Ukraine", "cc": "UA" }
+{ "res": [  ], "countryName": "Belgium", "cc": "B" }
+{ "res": [  ], "countryName": "Luxembourg", "cc": "L" }
+{ "res": [  ], "countryName": "Netherlands", "cc": "NL" }
+{ "res": [  ], "countryName": "Bosnia and Herzegovina", "cc": "BIH" }
+{ "res": [  ], "countryName": "Estonia", "cc": "EW" }
+{ "res": [  ], "countryName": "Monaco", "cc": "MC" }
+{ "res": [  ], "countryName": "Jersey", "cc": "GBJ" }
+{ "res": [  ], "countryName": "Man", "cc": "GBM" }
+{ "res": [  ], "countryName": "Azerbaijan", "cc": "AZ" }
+{ "res": [  ], "countryName": "Bahrain", "cc": "BRN" }
+{ "res": [  ], "countryName": "Bangladesh", "cc": "BD" }
+{ "res": [  ], "countryName": "Myanmar", "cc": "MYA" }
+{ "res": [  ], "countryName": "Bhutan", "cc": "BHT" }
+{ "res": [  ], "countryName": "Brunei", "cc": "BRU" }
+{ "res": [  ], "countryName": "Laos", "cc": "LAO" }
+{ "res": [  ], "countryName": "Cambodia", "cc": "K" }
+{ "res": [  ], "countryName": "Vietnam", "cc": "VN" }
+{ "res": [  ], "countryName": "Cocos Islands", "cc": "COCO" }
+{ "res": [  ], "countryName": "Gaza Strip", "cc": "GAZA" }
+{ "res": [  ], "countryName": "Iraq", "cc": "IRQ" }
+{ "res": [  ], "countryName": "Jordan", "cc": "JOR" }
+{ "res": [  ], "countryName": "Syria", "cc": "SYR" }
+{ "res": [  ], "countryName": "West Bank", "cc": "WEST" }
+{ "res": [  ], "countryName": "South Korea", "cc": "ROK" }
+{ "res": [  ], "countryName": "Maldives", "cc": "MV" }
+{ "res": [  ], "countryName": "Antigua and Barbuda", "cc": "AG" }
+{ "res": [  ], "countryName": "Aruba", "cc": "ARU" }
+{ "res": [  ], "countryName": "Bahamas", "cc": "BS" }
+{ "res": [  ], "countryName": "Barbados", "cc": "BDS" }
+{ "res": [  ], "countryName": "Belize", "cc": "BZ" }
+{ "res": [  ], "countryName": "British Virgin Islands", "cc": "BVIR" }
+{ "res": [  ], "countryName": "El Salvador", "cc": "ES" }
+{ "res": [  ], "countryName": "Greenland", "cc": "GROX" }
+{ "res": [  ], "countryName": "Saint Pierre and Miquelon", "cc": "SPMI" }
+{ "res": [  ], "countryName": "Cook Islands", "cc": "COOK" }
+{ "res": [  ], "countryName": "Guam", "cc": "GUAM" }
+{ "res": [  ], "countryName": "Kiribati", "cc": "KIR" }
+{ "res": [  ], "countryName": "Micronesia", "cc": "FSM" }
+{ "res": [  ], "countryName": "Norfolk Island", "cc": "NORF" }
+{ "res": [  ], "countryName": "Northern Mariana Islands", "cc": "NMIS" }
+{ "res": [  ], "countryName": "Palau", "cc": "PAL" }
+{ "res": [  ], "countryName": "Pitcairn Islands", "cc": "PITC" }
+{ "res": [  ], "countryName": "Tonga", "cc": "TO" }
+{ "res": [  ], "countryName": "Wallis and Futuna", "cc": "WAFU" }
+{ "res": [  ], "countryName": "Uruguay", "cc": "ROU" }
+{ "res": [  ], "countryName": "Guyana", "cc": "GUY" }
+{ "res": [  ], "countryName": "Suriname", "cc": "SME" }
+{ "res": [  ], "countryName": "Falkland Islands", "cc": "FALK" }
+{ "res": [  ], "countryName": "Mali", "cc": "RMM" }
+{ "res": [  ], "countryName": "Mauritania", "cc": "RIM" }
+{ "res": [  ], "countryName": "Tunisia", "cc": "TN" }
+{ "res": [  ], "countryName": "Western Sahara", "cc": "WSA" }
+{ "res": [  ], "countryName": "Angola", "cc": "ANG" }
+{ "res": [  ], "countryName": "Congo", "cc": "RCB" }
+{ "res": [  ], "countryName": "Zambia", "cc": "Z" }
+{ "res": [  ], "countryName": "Togo", "cc": "RT" }
+{ "res": [  ], "countryName": "Ghana", "cc": "GH" }
+{ "res": [  ], "countryName": "Burundi", "cc": "BI" }
+{ "res": [  ], "countryName": "Comoros", "cc": "COM" }
+{ "res": [  ], "countryName": "Guinea", "cc": "RG" }
+{ "res": [  ], "countryName": "Djibouti", "cc": "DJI" }
+{ "res": [  ], "countryName": "Eritrea", "cc": "ER" }
+{ "res": [  ], "countryName": "Senegal", "cc": "SN" }
+{ "res": [  ], "countryName": "Mozambique", "cc": "MOC" }
+{ "res": [  ], "countryName": "Mauritius", "cc": "MS" }
+{ "res": [  ], "countryName": "Swaziland", "cc": "SD" }
+*/

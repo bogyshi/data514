@@ -1,0 +1,61 @@
+use hw6index;
+Select distinct a.name as c1,b.name as c2
+from
+country a,
+country b,
+sea s1, split(s1.`-country`,' ') rc1,
+sea s2, split(s2.`-country`,' ') rc2,
+mountain y1, split(y1.`-country`, ' ') mc1,
+mountain y2, split(y2.`-country`, ' ') mc2
+where a.`-car_code` = rc1 and
+rc1 = mc1 and
+b.`-car_code` = rc2 and
+rc2=mc2 and
+s1.name = s2.name and
+y1.name = y2.name and
+a.`-car_code` < b.`-car_code`;
+
+/*
+{
+
+    c1: "France",
+    c2: "Italy"
+
+}
+{
+
+    c1: "North Korea",
+    c2: "China"
+
+}
+{
+
+    c1: "Spain",
+    c2: "France"
+
+}
+{
+
+    c1: "Norway",
+    c2: "Sweden"
+
+}
+{
+
+    c1: "Georgia",
+    c2: "Russia"
+
+}
+{
+
+    c1: "Argentina",
+    c2: "Chile"
+
+}
+{
+
+    c1: "Canada",
+    c2: "United States"
+
+}
+*/

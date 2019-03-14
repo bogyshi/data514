@@ -1,0 +1,41 @@
+use hw6index;
+Select distinct a.name as c1,b.name as c2,res,res2
+from
+country a,
+country b,
+sea s1, split(s1.`-country`,' ') rc1,
+sea s2, split(s2.`-country`,' ') rc2,
+mountain y1, split(y1.`-country`, ' ') mc1,
+mountain y2, split(y2.`-country`, ' ') mc2
+let res = (
+select s3.name
+from
+sea s3, split(s3.`-country`,' ') rc3,
+sea s4, split(s4.`-country`,' ') rc4
+where rc3=a.`-car_code` and rc4=b.`-car_code`
+and s3.name = s4.name
+),res2 = (
+select m3.name
+from
+mountain m3, split(m3.`-country`,' ') mc3,
+mountain m4, split(m4.`-country`,' ') mc4
+where mc3=a.`-car_code` and mc4=b.`-car_code`
+and m3.name =m4.name
+)
+where a.`-car_code` = rc1 and
+rc1 = mc1 and
+b.`-car_code` = rc2 and
+rc2=mc2 and
+s1.name = s2.name and
+y1.name = y2.name and
+a.`-car_code` < b.`-car_code`;
+
+/*
+{ "res": [ { "name": "Black Sea" } ], "res2": [ { "name": "Kasbek" } ], "c1": "Georgia", "c2": "Russia" }
+{ "res": [ { "name": "Yellow Sea" } ], "res2": [ { "name": "Changbai Shan" } ], "c1": "North Korea", "c2": "China" }
+{ "res": [ { "name": "Skagerrak" } ], "res2": [ { "name": "Sulitjelma" } ], "c1": "Norway", "c2": "Sweden" }
+{ "res": [ { "name": "Mediterranean Sea" } ], "res2": [ { "name": "Mont Blanc" } ], "c1": "France", "c2": "Italy" }
+{ "res": [ { "name": "Atlantic Ocean" }, { "name": "Mediterranean Sea" } ], "res2": [ { "name": "Vignemale" } ], "c1": "Spain", "c2": "France" }
+{ "res": [ { "name": "Atlantic Ocean" } ], "res2": [ { "name": "Ojos del Salado" }, { "name": "Llullaillaco" } ], "c1": "Argentina", "c2": "Chile" }
+{ "res": [ { "name": "Arctic Ocean" }, { "name": "Atlantic Ocean" }, { "name": "Pacific Ocean" } ], "res2": [ { "name": "Mt St.Elias" }, { "name": "Mt Bona" }, { "name": "Mt Fairweather" } ], "c1": "Canada", "c2": "United States" }
+*/
